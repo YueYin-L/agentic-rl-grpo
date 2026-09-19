@@ -32,8 +32,11 @@ def test_baseline_persists_trajectory_and_metrics(tmp_path) -> None:
     )
     output = tmp_path / "baseline-run"
     summary = run_baseline(tasks=[task], backend=backend, output_dir=output)
-    assert summary["overall"]["success"] == 1.0
+    assert summary["overall"]["task_success"] == 1.0
+    assert summary["overall"]["average_tool_calls"] == 2.0
     assert (output / "metrics.json").exists()
+    assert (output / "manifest.json").exists()
+    assert (output / "BASELINE_REPORT.md").exists()
     trajectory_lines = (output / "trajectories.jsonl").read_text(encoding="utf-8").splitlines()
     assert len(trajectory_lines) == 1
     assert json.loads(trajectory_lines[0])["verification"]["success"] is True

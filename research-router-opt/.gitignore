@@ -1,10 +1,12 @@
 .venv/
+.venv-vllm/
 .uv-cache/
 .pytest_cache/
 .pytest-tmp/
 .ruff_cache/
 .mypy_cache/
 dist/
+results/
 __pycache__/
 *.pyc
 debug.log

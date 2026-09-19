@@ -1,0 +1,38 @@
+[model]
+id = "Qwen/Qwen3.5-9B"
+revision = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+tokenizer_revision = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+precision = "bfloat16"
+chat_template = "checkpoint-bundled chat_template.jinja"
+thinking = false
+tool_calling = "OpenAI Chat Completions auto tool choice"
+
+[runtime]
+max_steps = 10
+model_timeout_s = 120.0
+tool_timeout_s = 5.0
+max_output_tokens = 1024
+
+[vllm]
+version = "0.29.0"
+served_model_name = "Qwen/Qwen3.5-9B"
+tensor_parallel_size = 1
+max_model_len = 8192
+max_num_seqs = 8
+gpu_memory_utilization = 0.90
+reasoning_parser = "qwen3"
+tool_call_parser = "qwen3_coder"
+enable_auto_tool_choice = true
+language_model_only = true
+generation_config = "vllm"
+
+[dataset]
+validation_path = "data/analysis_validation.jsonl"
+validation_sha256 = "95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c"
+test_path = "data/analysis_test.jsonl"
+test_sha256 = "34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b"
+
+[sources]
+model = "https://huggingface.co/Qwen/Qwen3.5-9B"
+vllm_recipe = "https://docs.vllm.ai/projects/recipes/en/latest/Qwen/Qwen3.5.html"
+tool_calling = "https://docs.vllm.ai/en/latest/features/tool_calling/"

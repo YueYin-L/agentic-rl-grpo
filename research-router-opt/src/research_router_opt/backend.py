@@ -63,12 +63,22 @@ class VLLMBackend:
 
     name = "vllm"
 
-    def __init__(self, *, base_url: str, model: str, api_key: str = "EMPTY") -> None:
+    def __init__(
+        self,
+        *,
+        base_url: str,
+        model: str,
+        api_key: str = "EMPTY",
+        max_tokens: int = 1024,
+    ) -> None:
         if not base_url.strip() or not model.strip():
             raise ValueError("base_url and model must be non-empty.")
+        if max_tokens < 1:
+            raise ValueError("max_tokens must be positive.")
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.api_key = api_key
+        self.max_tokens = max_tokens
 
     def reset(self) -> None:
         return None
@@ -85,7 +95,9 @@ class VLLMBackend:
             "messages": [message.to_dict() for message in messages],
             "tools": list(tools),
             "tool_choice": "auto",
+            "parallel_tool_calls": False,
             "temperature": 0.0,
+            "max_tokens": self.max_tokens,
         }
         request = Request(
             f"{self.base_url}/chat/completions",
