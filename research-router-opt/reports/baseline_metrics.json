@@ -1,0 +1,566 @@
+{
+  "metrics": {
+    "policy_name": "keyword_baseline",
+    "task_count": 24,
+    "selection_accuracy": 0.5,
+    "average_reward": 0.40000000000000036,
+    "invalid_action_rate": 0.0,
+    "average_tool_calls": 1.0,
+    "p50_latency_ms": 0.000700005330145359,
+    "p95_latency_ms": 0.001700012944638729
+  },
+  "trajectories": [
+    {
+      "task_id": "val-species_lookup-00-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要搜索论文，直接告诉我亚洲象的物种分布",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "不要搜索论文，直接告诉我亚洲象的物种分布",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.003300025127828121
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-species_lookup-00-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要搜索论文，直接告诉我穿山甲的物种分布",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "不要搜索论文，直接告诉我穿山甲的物种分布",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.001200009137392044
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-species_lookup-00-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要搜索论文，直接告诉我长臂猿的物种分布",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "不要搜索论文，直接告诉我长臂猿的物种分布",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-species_lookup-01-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "比较资料之前，先查询亚洲象的学名",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "比较资料之前，先查询亚洲象的学名",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-species_lookup-01-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "比较资料之前，先查询穿山甲的学名",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "比较资料之前，先查询穿山甲的学名",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.0007999769877642393
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-species_lookup-01-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "比较资料之前，先查询长臂猿的学名",
+          "action": "species_lookup",
+          "tool_output": {
+            "tool": "species_lookup",
+            "status": "ok",
+            "result": {
+              "kind": "species_card",
+              "query": "比较资料之前，先查询长臂猿的学名",
+              "source": "local_fixture"
+            }
+          },
+          "latency_ms": 0.000900006853044033
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-00-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用总结，搜索发表过的亚洲象研究文献",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用总结，搜索发表过的亚洲象研究文献",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.0007999769877642393
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-00-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用总结，搜索发表过的穿山甲研究文献",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用总结，搜索发表过的穿山甲研究文献",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.001700012944638729
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-00-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用总结，搜索发表过的长臂猿研究文献",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用总结，搜索发表过的长臂猿研究文献",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000900006853044033
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-01-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "为了比较证据，请先检索亚洲象方向的论文",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "为了比较证据，请先检索亚洲象方向的论文",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.0007999769877642393
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-01-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "为了比较证据，请先检索穿山甲方向的论文",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "为了比较证据，请先检索穿山甲方向的论文",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-paper_search-01-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "为了比较证据，请先检索长臂猿方向的论文",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "为了比较证据，请先检索长臂猿方向的论文",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.0007999769877642393
+        }
+      ],
+      "reward": 1.0,
+      "success": true,
+      "termination_reason": "task_completed"
+    },
+    {
+      "task_id": "val-evidence_compare-00-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要只做摘要，请比较两篇亚洲象论文的实验方法",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不要只做摘要，请比较两篇亚洲象论文的实验方法",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-evidence_compare-00-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要只做摘要，请比较两篇穿山甲论文的实验方法",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不要只做摘要，请比较两篇穿山甲论文的实验方法",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.00100000761449337
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-evidence_compare-00-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不要只做摘要，请比较两篇长臂猿论文的实验方法",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不要只做摘要，请比较两篇长臂猿论文的实验方法",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-evidence_compare-01-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "已有多篇亚洲象文献，分析它们的结论差异",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "已有多篇亚洲象文献，分析它们的结论差异",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.0006999762263149023
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-evidence_compare-01-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "已有多篇穿山甲文献，分析它们的结论差异",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "已有多篇穿山甲文献，分析它们的结论差异",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-evidence_compare-01-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "已有多篇长臂猿文献，分析它们的结论差异",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "已有多篇长臂猿文献，分析它们的结论差异",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-00-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用再检索，请总结现有亚洲象论文摘要",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用再检索，请总结现有亚洲象论文摘要",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000800006091594696
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-00-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用再检索，请总结现有穿山甲论文摘要",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用再检索，请总结现有穿山甲论文摘要",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-00-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "不用再检索，请总结现有长臂猿论文摘要",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "不用再检索，请总结现有长臂猿论文摘要",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000600004568696022
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-01-00",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "读完多篇亚洲象文献后，归纳摘要中的主要结论",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "读完多篇亚洲象文献后，归纳摘要中的主要结论",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.0005999754648655653
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-01-01",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "读完多篇穿山甲文献后，归纳摘要中的主要结论",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "读完多篇穿山甲文献后，归纳摘要中的主要结论",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    },
+    {
+      "task_id": "val-abstract_summarize-01-02",
+      "policy_name": "keyword_baseline",
+      "steps": [
+        {
+          "observation": "读完多篇长臂猿文献后，归纳摘要中的主要结论",
+          "action": "paper_search",
+          "tool_output": {
+            "tool": "paper_search",
+            "status": "ok",
+            "result": {
+              "kind": "paper_candidates",
+              "query": "读完多篇长臂猿文献后，归纳摘要中的主要结论",
+              "count": 3
+            }
+          },
+          "latency_ms": 0.000700005330145359
+        }
+      ],
+      "reward": -0.2,
+      "success": false,
+      "termination_reason": "wrong_tool"
+    }
+  ]
+}

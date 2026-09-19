@@ -1,0 +1,20 @@
+{
+  "train": {
+    "path": "analysis_train.jsonl",
+    "task_count": 300,
+    "sha256": "d2334fe84e165519be152054e433a4966b8ea7862197a5c7d14f412d2a4a0292",
+    "database_id": "train_analytics"
+  },
+  "validation": {
+    "path": "analysis_validation.jsonl",
+    "task_count": 150,
+    "sha256": "95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c",
+    "database_id": "validation_analytics"
+  },
+  "test": {
+    "path": "analysis_test.jsonl",
+    "task_count": 150,
+    "sha256": "34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b",
+    "database_id": "test_analytics"
+  }
+}
