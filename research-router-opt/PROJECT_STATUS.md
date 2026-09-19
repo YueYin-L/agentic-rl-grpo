@@ -1,149 +1,177 @@
 # Current Phase
 
-GATE A — Checkpoint 1–3 complete; waiting for human review before the canonical real-model baseline.
+DAY 2 — CP4 canonical baseline is BLOCKED BEFORE the 20-task real-model smoke.
 
 # Sprint Day
 
-DAY 1
+DAY 2
 
 # Latest Work
 
-- Audited the existing one-step LinUCB router and preserved its verified pipeline.
-- Added a model-independent multi-turn runtime with `MockBackend` and `VLLMBackend`.
-- Added stateful DuckDB tools for schema inspection, read-only SQL, and safe arithmetic.
-- Added deterministic train/validation/test task generation across seven task types.
-- Added a semantic programmatic verifier and CPU-only regression tests.
-- Generated and hashed 300 train, 150 validation, and 150 frozen test tasks.
+- Froze the completed CP1–3 implementation on a normal Git branch and commit.
+- Locked the exact unquantized BF16 `Qwen/Qwen3.5-9B` checkpoint and tokenizer revision.
+- Added a Linux vLLM 0.29.0 launcher using the official Qwen3.5 tool-call parser settings.
+- Extended the existing baseline runner to enforce Git/dataset/model identity and persist
+  trajectories, manifest, metrics, behavior checks, failures, compute statistics, and report.
+- Kept Runtime, Environment, Verifier, tools, and all three dataset splits unchanged.
+- Re-ran the full CPU quality gate: pytest, Ruff, and strict MyPy PASS.
+- Diagnosed compute access: local 8 GiB GPU is not suitable for the canonical BF16 9B service;
+  no authenticated Linux GPU vLLM endpoint is currently available.
 
 # Checkpoint Status
 
-CP1: PASS — Runtime, backend replacement, tool errors, timeout, reset, bounds, and serialization.
+CP1: PASS — unchanged.
 
-CP2: PASS — Stateful environment and 300/150/150 isolated task splits with taxonomy coverage.
+CP2: PASS — unchanged; 300/150/150 isolated task splits remain frozen.
 
-CP3: PASS — Deterministic verifier for answer, SQL execution/result, tool validity, schema use,
-grounding, recovery, step count, and redundant calls.
+CP3: PASS — unchanged; deterministic verifier remains CPU-compatible.
 
-CP4: NOT STARTED — no canonical real-model baseline exists.
+CP4: BLOCKED BEFORE SMOKE — configuration and runner are ready, but 0/20 smoke and 0/150
+canonical validation tasks have run because no accessible Linux GPU vLLM endpoint exists.
 
-CP5: NOT STARTED — reward must be derived from baseline failures.
+CP5: NOT STARTED — no reward components or weights are frozen without real baseline failures.
 
-CP6: NOT STARTED — ART/GRPO/vLLM/LoRA are not installed or integrated.
+CP6: NOT STARTED.
 
-CP7: NOT STARTED — no GRPO model checkpoint exists.
+CP7: NOT STARTED.
 
-CP8: NOT STARTED — frozen test has not been opened for model evaluation.
+CP8: NOT STARTED — frozen test remains unused.
 
 # Tests
 
-pytest: PASS — 19 tests.
+pytest: PASS — 19 tests in 5.06 s.
 
 Ruff: PASS.
 
-MyPy: PASS — strict mode over the package.
+MyPy: PASS — strict mode, 20 source files.
+
+Linux launcher syntax: PASS via Git Bash `bash -n`.
+
+TOML and baseline CLI load: PASS.
 
 # Compute
 
-CPU: PASS for CP1–3.
+CPU: PASS for CP1–3 and CP4 runner regression.
 
-Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB VRAM, driver 566.07,
-CUDA driver capability 12.7.
+Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB VRAM, driver 566.07.
 
-Cloud GPU: not provisioned.
+Cloud GPU: not provisioned; remote SSH host was reachable but authentication was rejected.
 
-GPU currently required: NO for GATE A review; YES for the formal target-model baseline and GRPO.
+GPU currently required: YES — Linux inference GPU for CP4 only, not GRPO training.
 
 # Dataset
 
-train: 300 tasks, database fixture `train_analytics`.
+train: 300 tasks; unchanged.
 
-validation: 150 tasks, database fixture `validation_analytics`.
+validation: 150 tasks; SHA-256
+`95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c`.
 
-test: 150 tasks, database fixture `test_analytics`; frozen and unused for tuning.
-
-Hashes are recorded in `data/analysis_manifest.json`.
+test: 150 tasks; frozen, unused; SHA-256
+`34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b`.
 
 # Baseline
 
-The legacy 24-task LinUCB result remains reproducible but is not the Agent GRPO baseline. No
-Qwen/vLLM baseline claim is currently valid.
+Run ID: none — no real-model run was started.
+
+Exact model: `Qwen/Qwen3.5-9B` at revision
+`c202236235762e1c871ad0ccb60c8ee5ba337b9a`.
+
+Precision: BF16, no quantized substitution. vLLM: 0.29.0 on Linux. Max model length:
+8192. Chat template: checkpoint-bundled. Tool calling: OpenAI-compatible auto tool choice with
+`qwen3_coder`, reasoning parser `qwen3`, thinking disabled, parallel tool calls disabled.
+
+Key metrics: unavailable; 0/20 smoke and 0/150 canonical validation tasks executed.
 
 # Reward
 
-No GRPO reward has been implemented. CP3 verifier signals are evidence inputs for CP5, not a
-preselected reward formula.
+No reward has been selected. CP5 remains gated on the canonical baseline and failure analysis.
 
 # GRPO
 
-Not started. No ART dependency, policy update, adapter, or training result is claimed.
+Not started. No ART/GRPO update, LoRA adapter, or training result is claimed.
 
 # Evaluation
 
-Verifier evaluation is CPU-tested. Canonical validation and frozen-test model evaluation are pending.
+No real-model validation metric exists yet. Frozen test has not been used.
 
 # Known Failures
 
-- Exact target checkpoint is absent from repository configuration.
-- Native Windows vLLM is unavailable in the current environment.
-- Docker Desktop Linux engine is not running and WSL status access failed.
+- No authenticated Linux vLLM `/v1` endpoint is available.
+- Real `/v1/models` identity, tool-call compatibility, OOM stability, and GPU utilization remain
+  unverified.
+- Agentic behavior and shortcuts cannot be assessed without real-model trajectories.
 
 # Risks
 
-1. The requested 9B-class model will not fit a stable BF16 vLLM baseline in 8 GiB local VRAM;
-   checkpoint and quantization must be verified before selecting compute.
-2. Synthetic templates may be too easy or expose wording artifacts; CP4 diagnostics must measure
-   task-type difficulty before reward design.
-3. The entire `research-router-opt/` directory is currently untracked from the parent detached HEAD,
-   so reproducibility evidence is not protected by a commit yet.
+1. A Linux GPU with insufficient headroom may OOM under the BF16 9B configuration; record peak VRAM
+   during the 20-task smoke before raising concurrency.
+2. Qwen may emit malformed tool calls or shortcut templated tasks; the smoke gate must classify this
+   before the 150-task run.
+3. CP5 reward design would be speculative if started before the canonical failure set exists.
 
 # Deferred Work
 
-SFT baseline, Docker Compose, W&B dashboards, UI, MCP, Redis, broad benchmark expansion, multiple
-models, large hyperparameter searches, and extra reward ablations.
+SFT, formal GRPO, Docker Compose, W&B dashboards, UI, MCP, Redis, broad benchmarks, multi-model
+comparison, hyperparameter search, and extra reward ablations.
 
 # Files Changed
 
-- Added `analysis_models.py`, `backend.py`, `analysis_tools.py`, `environment.py`, `runtime.py`,
-  `analysis_tasks.py`, `verifier.py`, and the CP4-ready `baseline.py` run writer.
-- Added CP1–3 tests and generated `data/analysis_*.jsonl` plus the split manifest.
-- Added DuckDB/pandas dependencies and kept the original LinUCB modules intact.
+- `configs/cp4_qwen35_9b.toml`
+- `scripts/serve_qwen35_9b.sh`
+- `src/research_router_opt/backend.py`
+- `src/research_router_opt/baseline.py`
+- `tests/test_baseline.py`
+- `BASELINE_REPORT.md`
+- `PROJECT_STATUS.md`
 
 # Reproduction Commands
 
+Linux server:
+
+```bash
+bash scripts/serve_qwen35_9b.sh
+```
+
+20-task validation smoke from PowerShell:
+
 ```powershell
-$env:UV_CACHE_DIR=(Resolve-Path .uv-cache).Path
-uv sync --extra dev
-uv run research-router generate-analysis-data --project-root .
-uv run pytest -q
-uv run ruff check .
-uv run mypy
+$env:VLLM_BASE_URL="http://<linux-gpu-host>:8000/v1"
+$env:VLLM_API_KEY="EMPTY"
+$env:BASELINE_GPU_NAME="<exact GPU name>"
+$env:BASELINE_GPU_VRAM="<total VRAM>"
+$env:BASELINE_GPU_DRIVER="<driver version>"
+uv --cache-dir .uv-cache run python -m research_router_opt.baseline `
+  --config configs/cp4_qwen35_9b.toml `
+  --phase smoke `
+  --limit 20 `
+  --output results/diagnostics/cp4-smoke-001
+```
+
+150-task canonical validation, only after manual smoke review marks PASS:
+
+```powershell
+uv --cache-dir .uv-cache run python -m research_router_opt.baseline `
+  --config configs/cp4_qwen35_9b.toml `
+  --phase canonical `
+  --limit 150 `
+  --output results/baseline/cp4-qwen35-9b-validation-001
 ```
 
 # Git State
 
-Parent checkout: detached `HEAD` at `41a44e13972c930e647be07dca31a2dc635fe468`.
+Branch: `codex/agent-grpo-cp4-baseline`.
 
-Working tree: `research-router-opt/` is untracked in the parent repository. No commit was created.
+Gate A freeze commit: `ada7ec332cfc4655c9f5403f9c1d9f4787c3f877`.
+
+CP4 runner/config commit: `e358e8c24ae592ca91cbde9331570913e4a09036`.
+
+Working tree is expected to be clean after this status/report update is committed. Every actual
+baseline manifest records the runtime commit and clean-tree state at execution time.
 
 # Next 1–3 Actions
 
-1. GATE A review: confirm tasks require genuine multi-turn behavior and verifier semantics are sound.
-2. Resolve an exact 9B-class checkpoint and a Linux OpenAI-compatible vLLM endpoint, then run a
-   10–20-task validation smoke test.
-3. Freeze the prompt/runtime configuration and run the 150-task canonical validation baseline.
-
-## Checkpoint 4 Smoke Command
-
-After `/v1/models` confirms the exact served ID, run:
-
-```powershell
-$env:VLLM_BASE_URL="http://<linux-gpu-host>:8000/v1"
-$env:VLLM_MODEL="<exact-id-returned-by-v1-models>"
-uv run python -m research_router_opt.baseline `
-  --data data/analysis_validation.jsonl `
-  --limit 20 `
-  --max-steps 10 `
-  --output results/diagnostics/cp4-smoke-001
-```
-
-The output directory must be new; the runner refuses to overwrite an existing formal run.
+1. Provide or start an authenticated Linux GPU endpoint and run `scripts/serve_qwen35_9b.sh`.
+2. Run and manually audit the 20-task validation smoke for engineering stability, genuine multi-turn
+   behavior, difficulty, and shortcuts.
+3. If and only if smoke passes, run all 150 validation tasks and hand the persisted trajectories to
+   CP5 for CPU-only reward audit.
