@@ -19,11 +19,11 @@ Gate A requires human review of agentic task quality and verifier correctness.
 
 ### DAY 2 — Baseline, Failure Analysis, Reward, GRPO Smoke
 
-- [ ] Resolve the exact model checkpoint and canonical chat/tool-call template.
-- [ ] Run 10–20 validation diagnostics; do not publish these as formal metrics.
-- [ ] Freeze runtime/prompt settings and run the 150-task canonical validation baseline.
-- [ ] Produce task-type metrics and programmatic failure-mode analysis.
-- [ ] Design a small reward from observed failures and audit it offline on baseline trajectories.
+- [x] Resolve the exact model checkpoint and canonical chat/tool-call template.
+- [x] Run 10–20 validation diagnostics; do not publish these as formal metrics.
+- [x] Freeze runtime/prompt settings and run the 150-task canonical validation baseline.
+- [x] Produce task-type metrics and programmatic failure-mode analysis.
+- [x] Design a small reward from observed failures and audit it offline on baseline trajectories.
 - [ ] Integrate the installed ART API, vLLM rollout, and LoRA update using current official versions.
 - [ ] Prove adapter parameter change, save/reload, and a post-update rollout.
 

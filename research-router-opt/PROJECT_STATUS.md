@@ -1,6 +1,6 @@
 # Current Phase
 
-DAY 2 — CP4 canonical baseline PASS; ready for CP5 offline reward audit.
+DAY 2 — CP5 offline reward audit PASS; ready to prepare CP6 Minimal GRPO Smoke Test.
 
 # Sprint Day
 
@@ -15,7 +15,12 @@ DAY 2
   multi-observation behavior, loops, premature final answers, and shortcuts.
 - Fixed two verifier gaps exposed by valid real-model decompositions and rescored the immutable
   trajectories offline with explicit rollout/verifier provenance.
-- Did not use the frozen test split and did not start reward weighting or GRPO.
+- Did not use the frozen test split and did not start GRPO.
+- Audited verifier-signal activation, variance, overlap, conditional rates, and task-type coverage.
+- Replaced broad recovery credit with a strict `meaningful_recovery` signal: 7 meaningful versus
+  25 superficial recoveries among 32 broadly recovered trajectories.
+- Compared three bounded reward candidates and froze the outcome-dominant balanced configuration.
+- Persisted per-trajectory reward decompositions and passed all offline ordering/hacking checks.
 
 # Checkpoint Status
 
@@ -28,9 +33,9 @@ CP3: PASS — deterministic CPU verifier; real-trajectory scalar evidence cases 
 CP4: PASS — smoke `cp4-smoke-004`; canonical rollout `cp4-canonical-001`; audited output
 `cp4-canonical-001-audited`.
 
-CP5: READY — candidate signals identified; weights not frozen.
+CP5: PASS — canonical `configs/cp5_reward.toml` frozen after offline reward and hacking audit.
 
-CP6: NOT STARTED.
+CP6: READY, NOT STARTED — only Minimal GRPO Smoke Test preparation is authorized.
 
 CP7: NOT STARTED.
 
@@ -38,11 +43,11 @@ CP8: NOT STARTED — frozen test remains unused.
 
 # Tests
 
-pytest: PASS — 23 tests.
+pytest: PASS — 30 tests.
 
 Ruff: PASS.
 
-MyPy: PASS — 21 checked source/script files.
+MyPy: PASS — 22 checked source/script files.
 
 # Compute
 
@@ -52,7 +57,7 @@ Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical 
 
 Cloud GPU: NVIDIA GeForce RTX 4080 SUPER, 32760 MiB, driver 595.71.05.
 
-GPU currently required: NO — CP5 reward audit runs over saved trajectories on CPU.
+GPU currently required: NO — CP5 is complete; provision GPU only when CP6 smoke is ready to run.
 
 # Dataset
 
@@ -86,13 +91,25 @@ Top failure modes: grounding failure 76; excessive tool use 64; hallucination/wr
 
 # Reward
 
-No component weight is frozen. CP5 candidates come directly from baseline evidence:
-answer/result correctness, tool validity, recovery, grounding, multi-observation completion,
-and bounded efficiency penalties.
+CP5 run: `cp5-reward-audit-002` over immutable audited validation trajectories.
+
+Canonical positive weights: answer correct 2.0; result correct 2.0; grounded 1.5; meaningful
+recovery 0.4; valid multi-observation completion 0.4. Outcome positive mass (5.5) dominates
+process positive mass (0.8).
+
+Canonical penalties: wrong answer 1.0; wrong result 1.0; ungrounded 0.8; capped tool errors,
+redundant calls, repeated nonexistent-object probes, excess calls, and max-step termination.
+
+Reward distribution: overall mean 1.2500, std 4.3504, median 0.2000; success mean 5.4750;
+failure mean -2.8638. Lowest success 5.05; highest failure 0.20.
+
+All required pairwise audits PASS, including correct versus wrong arithmetic and meaningful versus
+superficial recovery. `tool_valid` and `sql_exec_success` receive no positive reward.
 
 # GRPO
 
-Not started. No ART/GRPO update, LoRA adapter, checkpoint, or improvement is claimed.
+Not started. CP6 may perform only a minimal ART/GRPO/LoRA save-reload smoke; no formal training,
+checkpoint quality, or improvement is claimed.
 
 # Evaluation
 
@@ -104,13 +121,16 @@ Validation baseline only. Frozen test has not been opened for tuning or reportin
 - Multi-query tasks often waste steps guessing nonexistent tables and terminate at max_steps.
 - Correct tool outcomes are sometimes rounded or rewritten imprecisely in the final answer,
   causing strict grounding/accuracy failure.
+- The original broad recovery rate was misleading: only 7/32 broad recoveries were meaningful.
 
 # Risks
 
-1. A reward dominated by SQL execution would reinforce wrong arithmetic semantics.
-2. A reward dominated by final-answer matching could ignore loops and weak tool grounding.
-3. Recovery rate alone is easy to overread because any later successful tool call is not
-   necessarily a correct recovery; CP5 must inspect recovery trajectories explicitly.
+1. Strict answer formatting and verifier coverage can still shape outcome reward; CP6 must monitor
+   task success and reward together.
+2. The single validated correct SQL+Calculator baseline case makes arithmetic pairwise evidence
+   directionally strong but sample-limited.
+3. Process-richer weights slightly reduce the efficiency margin, so they remain rejected rather
+   than being promoted because of marginally larger mean separation.
 
 # Deferred Work
 
@@ -123,10 +143,14 @@ large hyperparameter search, and additional reward ablations.
 - `src/research_router_opt/verifier.py`
 - `src/research_router_opt/baseline.py`
 - `scripts/rescore_baseline.py`
+- `scripts/analyze_rewards.py`
 - `configs/cp4_qwen35_9b.toml`
+- `configs/cp5_reward.toml`
 - `tests/test_backend.py`
 - `tests/test_verifier.py`
+- `tests/test_reward.py`
 - `BASELINE_REPORT.md`
+- `REWARD_ANALYSIS.md`
 - `PROJECT_STATUS.md`
 
 # Reproduction Commands
@@ -134,7 +158,7 @@ large hyperparameter search, and additional reward ablations.
 ```powershell
 uv --cache-dir .uv-cache run pytest -q
 uv --cache-dir .uv-cache run ruff check .
-uv --cache-dir .uv-cache run mypy src scripts/rescore_baseline.py
+uv --cache-dir .uv-cache run mypy src scripts/rescore_baseline.py scripts/analyze_rewards.py
 ```
 
 Canonical and offline-rescore commands are recorded in `BASELINE_REPORT.md`.
@@ -149,10 +173,14 @@ Canonical rollout commit: `670cdbda572697dae3690a275579a5b94c53bad0`.
 
 Verifier audit commit: `ddd656e2de9e8461f8c2db15dbc08328c8aa3f85`.
 
-Documentation update remains to be committed; working tree should be clean afterward.
+CP5 implementation commit: `ccd8430cbf9ae7a07a6bb4073bd2c74df78ea95c`.
+
+CP5 audit-signal commit: `fde828b9532542fe35ff72250a591a4b13f2148a`.
+
+CP5 report/status update remains to be committed; working tree should be clean afterward.
 
 # Next 1–3 Actions
 
-1. Release the inference GPU; retain the model/checkpoint only if CP6 will start immediately.
-2. Run CP5 reward decomposition over the saved audited trajectories on CPU.
-3. Audit reward separation and hacking candidates before any GRPO smoke test.
+1. Inspect the currently installed ART API and freeze a minimal CP6 smoke configuration.
+2. Select a few train tasks only, prove rollout -> reward -> LoRA update -> save -> reload.
+3. Verify adapter parameters changed and a post-update rollout works; do not start formal GRPO.
