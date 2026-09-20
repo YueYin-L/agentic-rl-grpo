@@ -70,6 +70,7 @@ class VLLMBackend:
         model: str,
         api_key: str = "EMPTY",
         max_tokens: int = 1024,
+        seed: int = 0,
     ) -> None:
         if not base_url.strip() or not model.strip():
             raise ValueError("base_url and model must be non-empty.")
@@ -79,6 +80,7 @@ class VLLMBackend:
         self.model = model
         self.api_key = api_key
         self.max_tokens = max_tokens
+        self.seed = seed
 
     def reset(self) -> None:
         return None
@@ -98,6 +100,7 @@ class VLLMBackend:
             "parallel_tool_calls": False,
             "temperature": 0.0,
             "max_tokens": self.max_tokens,
+            "seed": self.seed,
         }
         request = Request(
             f"{self.base_url}/chat/completions",

@@ -12,6 +12,7 @@ max_steps = 10
 model_timeout_s = 120.0
 tool_timeout_s = 5.0
 max_output_tokens = 1024
+seed = 20260920
 
 [vllm]
 version = "0.29.0"

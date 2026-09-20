@@ -563,6 +563,7 @@ def main() -> None:
         model=model,
         api_key=api_key,
         max_tokens=int(runtime_values["max_output_tokens"]),
+        seed=int(runtime_values["seed"]),
     )
     summary = run_baseline(
         tasks=tasks,
