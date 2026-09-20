@@ -15,6 +15,7 @@ from typing import Any, cast
 
 from research_router_opt.analysis_models import (
     AgentState,
+    AnalysisTask,
     AnalysisTrajectory,
     ToolCall,
     ToolResult,
@@ -88,6 +89,7 @@ def _raw_multi_observation(trajectory: AnalysisTrajectory) -> bool:
 
 
 def _signals(
+    task: AnalysisTask,
     trajectory: AnalysisTrajectory,
     verification: VerificationResult,
 ) -> dict[str, bool]:
@@ -109,7 +111,10 @@ def _signals(
         "calculator_error": any(
             result.name == "calculator" and result.status != "ok" for result in results
         ),
-        "multi_observation_completion": _raw_multi_observation(trajectory),
+        "multi_observation_completion": (
+            task.task_type == "multi_query_aggregation"
+            and _raw_multi_observation(trajectory)
+        ),
     }
 
 
@@ -467,7 +472,7 @@ def main() -> None:
             trajectory = _trajectory(cast(dict[str, Any], raw["trajectory"]))
             verification = verify_trajectory(task, trajectory)
             reward = score_agent_trajectory(task, trajectory, verification, config)
-            signals = _signals(trajectory, verification)
+            signals = _signals(task, trajectory, verification)
             record = {
                 "task_id": task_id,
                 "task_type": task.task_type,
