@@ -166,6 +166,25 @@ def test_verifier_recognizes_error_recovery_and_hallucinated_answer() -> None:
         _task(recovery=True), _trajectory(calls=calls, results=results, answer="3")
     )
     assert recovered.recovered_from_error is True
+    assert recovered.meaningful_recovery is True
     assert recovered.success is True
     assert hallucinated.answer_correct is False
     assert hallucinated.grounded is False
+    assert hallucinated.meaningful_recovery is False
+
+
+def test_verifier_rejects_superficial_recovery() -> None:
+    calls = [
+        ToolCall("bad", "schema", {"table": "missing"}),
+        ToolCall("unrelated", "schema", {"table": "orders"}),
+    ]
+    results = [
+        ToolResult("bad", "schema", "error", error="Unknown table: missing"),
+        ToolResult("unrelated", "schema", "ok", {"tables": {"orders": []}}),
+    ]
+    verified = verify_trajectory(
+        _task(recovery=True),
+        _trajectory(calls=calls, results=results, answer="2"),
+    )
+    assert verified.recovered_from_error is True
+    assert verified.meaningful_recovery is False

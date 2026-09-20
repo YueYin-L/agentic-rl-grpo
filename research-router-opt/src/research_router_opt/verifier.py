@@ -155,6 +155,51 @@ def _recovered(results: list[ToolResult]) -> bool:
     return any(result.status == "ok" for result in results[failure_index + 1 :])
 
 
+def _meaningful_recovered(
+    calls: list[ToolCall],
+    results: list[ToolResult],
+    *,
+    result_correct: bool,
+    grounded: bool,
+) -> bool:
+    """Require a relevant changed action and correct grounded evidence after an error."""
+    if not result_correct or not grounded:
+        return False
+    call_by_id = {call.call_id: call for call in calls}
+    for failure_index, failed_result in enumerate(results):
+        if failed_result.status == "ok":
+            continue
+        failed_call = call_by_id.get(failed_result.call_id)
+        if failed_call is None:
+            continue
+        later_results = results[failure_index + 1 :]
+        corrected_same_tool = any(
+            later.status == "ok"
+            and later.name == failed_result.name
+            and (later_call := call_by_id.get(later.call_id)) is not None
+            and later_call.arguments != failed_call.arguments
+            for later in later_results
+        )
+        if not corrected_same_tool:
+            continue
+        if failed_result.name != "schema":
+            return True
+        correction_index = next(
+            index
+            for index, later in enumerate(later_results)
+            if later.status == "ok"
+            and later.name == "schema"
+            and (later_call := call_by_id.get(later.call_id)) is not None
+            and later_call.arguments != failed_call.arguments
+        )
+        if any(
+            result.status == "ok" and result.name in {"sql", "calculator"}
+            for result in later_results[correction_index + 1 :]
+        ):
+            return True
+    return False
+
+
 def _redundant_calls(calls: list[ToolCall]) -> int:
     signatures = [
         (call.name, json.dumps(call.arguments, ensure_ascii=False, sort_keys=True))
@@ -180,6 +225,12 @@ def verify_trajectory(task: AnalysisTask, trajectory: AnalysisTrajectory) -> Ver
     recovered = _recovered(state.tool_results)
     redundant_calls = _redundant_calls(state.tool_calls)
     grounded = _grounded(task, state.tool_results, answer_correct)
+    meaningful_recovery = _meaningful_recovered(
+        state.tool_calls,
+        state.tool_results,
+        result_correct=result_correct,
+        grounded=grounded,
+    )
     failure_modes: list[str] = []
     if not answer_correct:
         failure_modes.append("wrong_answer")
@@ -209,6 +260,7 @@ def verify_trajectory(task: AnalysisTask, trajectory: AnalysisTrajectory) -> Ver
         schema_valid=schema_valid,
         grounded=grounded,
         recovered_from_error=recovered,
+        meaningful_recovery=meaningful_recovery,
         step_count=state.step_count,
         redundant_calls=redundant_calls,
         failure_modes=tuple(failure_modes),

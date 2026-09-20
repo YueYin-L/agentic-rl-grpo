@@ -128,6 +128,7 @@ class VerificationResult:
     schema_valid: bool
     grounded: bool
     recovered_from_error: bool
+    meaningful_recovery: bool
     step_count: int
     redundant_calls: int
     failure_modes: tuple[str, ...]
