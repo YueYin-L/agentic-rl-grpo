@@ -60,6 +60,40 @@ def test_verifier_accepts_semantically_equal_result_from_different_sql() -> None
     assert verified.grounded is True
 
 
+def test_verifier_accepts_scalar_result_derived_from_detail_rows() -> None:
+    calls = [
+        ToolCall("q", "sql", {"query": "SELECT order_id FROM orders"}),
+        ToolCall("c", "calculator", {"expression": "1 + 1"}),
+    ]
+    results = [
+        ToolResult(
+            "q",
+            "sql",
+            "ok",
+            {"columns": ["order_id"], "rows": [[10], [11]], "row_count": 2},
+        ),
+        ToolResult("c", "calculator", "ok", {"value": 2}),
+    ]
+    verified = verify_trajectory(_task(), _trajectory(calls=calls, results=results, answer="2"))
+    assert verified.result_correct is True
+    assert verified.grounded is True
+
+
+def test_verifier_accepts_scalar_result_grounded_in_sql_row_count() -> None:
+    calls = [ToolCall("q", "sql", {"query": "SELECT order_id FROM orders"})]
+    results = [
+        ToolResult(
+            "q",
+            "sql",
+            "ok",
+            {"columns": ["order_id"], "rows": [[10], [11]], "row_count": 2},
+        )
+    ]
+    verified = verify_trajectory(_task(), _trajectory(calls=calls, results=results, answer="2"))
+    assert verified.result_correct is True
+    assert verified.grounded is True
+
+
 def test_verifier_detects_wrong_answer_malformed_repeat_and_grounding_failure() -> None:
     repeated = ToolCall("q1", "sql", {"query": "SELECT wrong FROM orders"})
     calls = [repeated, ToolCall("q2", "sql", repeated.arguments), ToolCall("x", "missing", {})]

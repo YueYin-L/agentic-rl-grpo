@@ -79,11 +79,39 @@ def _result_correct(task: AnalysisTask, results: list[ToolResult]) -> bool:
         for result in results
         if result.name == "sql" and result.status == "ok"
     ]
-    return all(
-        any(
-            _rows_equal(actual, expected, task.answer_tolerance)
+
+    # A real agent may retrieve detail rows and finish a scalar aggregation with
+    # the calculator, or ground a COUNT answer in the SQL tool's row_count.
+    # Preserve strict row-set comparison for structured results, but accept
+    # these equivalent evidence paths when the reference result is one scalar.
+    scalar_evidence: list[Any] = []
+    for result in results:
+        if result.status != "ok" or result.name not in {"sql", "calculator"}:
+            continue
+        if result.name == "sql":
+            scalar_evidence.extend(_flatten_values(result.output.get("rows", [])))
+            if "row_count" in result.output:
+                scalar_evidence.append(result.output["row_count"])
+        elif "value" in result.output:
+            scalar_evidence.append(result.output["value"])
+
+    def expected_result_observed(expected: Iterable[Iterable[Any]]) -> bool:
+        expected_rows = [tuple(row) for row in expected]
+        if any(
+            _rows_equal(actual, expected_rows, task.answer_tolerance)
             for actual in actual_sql_results
+        ):
+            return True
+        if len(expected_rows) != 1 or len(expected_rows[0]) != 1:
+            return False
+        expected_scalar = expected_rows[0][0]
+        return any(
+            _value_equal(actual, expected_scalar, task.answer_tolerance)
+            for actual in scalar_evidence
         )
+
+    return all(
+        expected_result_observed(expected)
         for expected in task.expected_sql_results
     )
 
