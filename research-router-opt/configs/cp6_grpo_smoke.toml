@@ -1,0 +1,51 @@
+[model]
+id = "Qwen/Qwen3.5-9B"
+revision = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+precision = "bfloat16"
+quantization = "none"
+max_seq_length = 4096
+
+[reward]
+config = "configs/cp5_reward.toml"
+
+[dataset]
+path = "data/analysis_train.jsonl"
+sha256 = "d2334fe84e165519be152054e433a4966b8ea7862197a5c7d14f412d2a4a0292"
+task_ids = [
+  "train-sql_calculator-0003",
+  "train-multi_query_aggregation-0004",
+  "train-multi_table_reasoning-0001",
+]
+
+[runtime]
+max_steps = 10
+model_timeout_s = 180.0
+tool_timeout_s = 5.0
+
+[rollout]
+group_size = 4
+temperature = 0.8
+top_p = 0.95
+max_output_tokens = 768
+
+[training]
+grpo_steps = 1
+learning_rate = 5e-6
+loss_fn = "ppo"
+scale_rewards = true
+
+[lora]
+rank = 8
+alpha = 16
+dropout = 0.0
+target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+
+[art]
+version = "0.5.20"
+backend = "LocalBackend"
+path = "/root/autodl-tmp/art-cp6"
+
+[compute]
+gpu = "NVIDIA GeForce RTX 4080 SUPER"
+vram_mib = 32760
+cuda_profile = "cu130"

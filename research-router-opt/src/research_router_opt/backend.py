@@ -71,6 +71,9 @@ class VLLMBackend:
         api_key: str = "EMPTY",
         max_tokens: int = 1024,
         seed: int = 0,
+        temperature: float = 0.0,
+        top_p: float = 1.0,
+        capture_choices: bool = False,
     ) -> None:
         if not base_url.strip() or not model.strip():
             raise ValueError("base_url and model must be non-empty.")
@@ -81,9 +84,13 @@ class VLLMBackend:
         self.api_key = api_key
         self.max_tokens = max_tokens
         self.seed = seed
+        self.temperature = temperature
+        self.top_p = top_p
+        self.capture_choices = capture_choices
+        self.raw_choices: list[dict[str, Any]] = []
 
     def reset(self) -> None:
-        return None
+        self.raw_choices = []
 
     def generate(
         self,
@@ -98,10 +105,13 @@ class VLLMBackend:
             "tools": list(tools),
             "tool_choice": "auto",
             "parallel_tool_calls": False,
-            "temperature": 0.0,
+            "temperature": self.temperature,
+            "top_p": self.top_p,
             "max_tokens": self.max_tokens,
             "seed": self.seed,
         }
+        if self.capture_choices:
+            payload["logprobs"] = True
         request = Request(
             f"{self.base_url}/chat/completions",
             data=json.dumps(payload).encode("utf-8"),
@@ -113,7 +123,10 @@ class VLLMBackend:
         )
         with urlopen(request, timeout=timeout_s) as response:  # noqa: S310
             body = json.loads(response.read().decode("utf-8"))
-        message = cast(dict[str, Any], body["choices"][0]["message"])
+        raw_choice = cast(dict[str, Any], body["choices"][0])
+        if self.capture_choices:
+            self.raw_choices.append(raw_choice)
+        message = cast(dict[str, Any], raw_choice["message"])
         tool_calls = cast(list[dict[str, Any]], message.get("tool_calls") or [])
         if tool_calls:
             raw_call = tool_calls[0]
