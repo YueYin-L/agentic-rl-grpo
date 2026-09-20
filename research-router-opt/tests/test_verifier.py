@@ -94,6 +94,34 @@ def test_verifier_accepts_scalar_result_grounded_in_sql_row_count() -> None:
     assert verified.grounded is True
 
 
+def test_verifier_accepts_final_calculator_outcome_without_reference_intermediates() -> None:
+    task = AnalysisTask(
+        task_id="multi-query",
+        split="validation",
+        task_type="multi_query_aggregation",
+        database_id="validation_analytics",
+        question="比较两个区域",
+        expected_answer=5.0,
+        reference_sql=("SELECT 0.15", "SELECT 0.10"),
+        expected_sql_results=(((0.15,),), ((0.10,),)),
+        expected_tools=("schema", "sql", "sql", "calculator"),
+    )
+    calls = [
+        ToolCall("q1", "sql", {"query": "SELECT 3, 20"}),
+        ToolCall("q2", "sql", {"query": "SELECT 1, 10"}),
+        ToolCall("c", "calculator", {"expression": "(3/20 - 1/10) * 100"}),
+    ]
+    results = [
+        ToolResult("q1", "sql", "ok", {"columns": ["refunds", "orders"], "rows": [[3, 20]]}),
+        ToolResult("q2", "sql", "ok", {"columns": ["refunds", "orders"], "rows": [[1, 10]]}),
+        ToolResult("c", "calculator", "ok", {"value": 5.0}),
+    ]
+    verified = verify_trajectory(task, _trajectory(calls=calls, results=results, answer="5.0"))
+    assert verified.result_correct is True
+    assert verified.grounded is True
+    assert verified.success is True
+
+
 def test_verifier_detects_wrong_answer_malformed_repeat_and_grounding_failure() -> None:
     repeated = ToolCall("q1", "sql", {"query": "SELECT wrong FROM orders"})
     calls = [repeated, ToolCall("q2", "sql", repeated.arguments), ToolCall("x", "missing", {})]

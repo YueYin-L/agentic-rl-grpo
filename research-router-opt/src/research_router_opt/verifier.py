@@ -110,10 +110,15 @@ def _result_correct(task: AnalysisTask, results: list[ToolResult]) -> bool:
             for actual in scalar_evidence
         )
 
-    return all(
+    reference_results_observed = all(
         expected_result_observed(expected)
         for expected in task.expected_sql_results
     )
+    outcome_observed = any(
+        _value_equal(actual, task.expected_answer, task.answer_tolerance)
+        for actual in scalar_evidence
+    )
+    return reference_results_observed or outcome_observed
 
 
 def _flatten_values(value: Any) -> Iterable[Any]:
