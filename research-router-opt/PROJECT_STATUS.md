@@ -1,6 +1,6 @@
 # Current Phase
 
-DAY 2 — CP4 canonical baseline is BLOCKED BEFORE the 20-task real-model smoke.
+DAY 2 — CP4 canonical baseline PASS; ready for CP5 offline reward audit.
 
 # Sprint Day
 
@@ -8,28 +8,27 @@ DAY 2
 
 # Latest Work
 
-- Froze the completed CP1–3 implementation on a normal Git branch and commit.
-- Locked the exact unquantized BF16 `Qwen/Qwen3.5-9B` checkpoint and tokenizer revision.
-- Added a Linux vLLM 0.29.0 launcher using the official Qwen3.5 tool-call parser settings.
-- Extended the existing baseline runner to enforce Git/dataset/model identity and persist
-  trajectories, manifest, metrics, behavior checks, failures, compute statistics, and report.
-- Kept Runtime, Environment, Verifier, tools, and all three dataset splits unchanged.
-- Re-ran the full CPU quality gate: pytest, Ruff, and strict MyPy PASS.
-- Diagnosed compute access: local 8 GiB GPU is not suitable for the canonical BF16 9B service;
-  no authenticated Linux GPU vLLM endpoint is currently available.
+- Served the exact pinned BF16 `Qwen/Qwen3.5-9B` checkpoint with Linux vLLM 0.29.0.
+- Passed the 20-task validation smoke engineering and agentic-behavior gate.
+- Completed the frozen 150-task canonical validation baseline and saved every trajectory.
+- Manually audited schema use, error recovery, multi-table joins, SQL + Calculator,
+  multi-observation behavior, loops, premature final answers, and shortcuts.
+- Fixed two verifier gaps exposed by valid real-model decompositions and rescored the immutable
+  trajectories offline with explicit rollout/verifier provenance.
+- Did not use the frozen test split and did not start reward weighting or GRPO.
 
 # Checkpoint Status
 
-CP1: PASS — unchanged.
+CP1: PASS — runtime unchanged.
 
-CP2: PASS — unchanged; 300/150/150 isolated task splits remain frozen.
+CP2: PASS — environment and 300/150/150 isolated task splits unchanged.
 
-CP3: PASS — unchanged; deterministic verifier remains CPU-compatible.
+CP3: PASS — deterministic CPU verifier; real-trajectory scalar evidence cases added to tests.
 
-CP4: BLOCKED BEFORE SMOKE — configuration and runner are ready, but 0/20 smoke and 0/150
-canonical validation tasks have run because no accessible Linux GPU vLLM endpoint exists.
+CP4: PASS — smoke `cp4-smoke-004`; canonical rollout `cp4-canonical-001`; audited output
+`cp4-canonical-001-audited`.
 
-CP5: NOT STARTED — no reward components or weights are frozen without real baseline failures.
+CP5: READY — candidate signals identified; weights not frozen.
 
 CP6: NOT STARTED.
 
@@ -39,139 +38,121 @@ CP8: NOT STARTED — frozen test remains unused.
 
 # Tests
 
-pytest: PASS — 19 tests in 5.06 s.
+pytest: PASS — 23 tests.
 
 Ruff: PASS.
 
-MyPy: PASS — strict mode, 20 source files.
-
-Linux launcher syntax: PASS via Git Bash `bash -n`.
-
-TOML and baseline CLI load: PASS.
+MyPy: PASS — 21 checked source/script files.
 
 # Compute
 
-CPU: PASS for CP1–3 and CP4 runner regression.
+CPU: PASS for runtime, environment, verifier, tests, aggregation, and offline rescoring.
 
-Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB VRAM, driver 566.07.
+Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical baseline.
 
-Cloud GPU: not provisioned; remote SSH host was reachable but authentication was rejected.
+Cloud GPU: NVIDIA GeForce RTX 4080 SUPER, 32760 MiB, driver 595.71.05.
 
-GPU currently required: YES — Linux inference GPU for CP4 only, not GRPO training.
+GPU currently required: NO — CP5 reward audit runs over saved trajectories on CPU.
 
 # Dataset
 
-train: 300 tasks; unchanged.
+train: 300 tasks.
 
 validation: 150 tasks; SHA-256
 `95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c`.
 
-test: 150 tasks; frozen, unused; SHA-256
+test: 150 tasks; frozen and unused; SHA-256
 `34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b`.
 
 # Baseline
 
-Run ID: none — no real-model run was started.
+Run ID: `cp4-canonical-001`.
 
-Exact model: `Qwen/Qwen3.5-9B` at revision
-`c202236235762e1c871ad0ccb60c8ee5ba337b9a`.
+Exact model: `Qwen/Qwen3.5-9B` revision
+`c202236235762e1c871ad0ccb60c8ee5ba337b9a`, BF16, no quantization.
 
-Precision: BF16, no quantized substitution. vLLM: 0.29.0 on Linux. Max model length:
-8192. Chat template: checkpoint-bundled. Tool calling: OpenAI-compatible auto tool choice with
-`qwen3_coder`, reasoning parser `qwen3`, thinking disabled, parallel tool calls disabled.
+Rollout commit: `670cdbda572697dae3690a275579a5b94c53bad0`.
 
-Key metrics: unavailable; 0/20 smoke and 0/150 canonical validation tasks executed.
+Audited verifier commit: `ddd656e2de9e8461f8c2db15dbc08328c8aa3f85`.
+
+Core metrics: Task Success 49.33%; Final Accuracy 54.00%; SQL Execution 92.00%; Result
+Correctness 55.33%; Tool Validity 100%; Invalid Calls 0%; Grounded Answers 49.33%; Recovery
+91.43%; Average Steps 5.81; Average Tool Calls 4.93; Timeout 0%.
+
+By type: Schema Discovery 100%; Error Recovery 86.36%; Distractor Schema 52.38%; Tool
+Selection 47.62%; Multi-table 40.91%; Multi-query 9.52%; SQL + Calculator 4.76%.
+
+Top failure modes: grounding failure 76; excessive tool use 64; hallucination/wrong final 51.
 
 # Reward
 
-No reward has been selected. CP5 remains gated on the canonical baseline and failure analysis.
+No component weight is frozen. CP5 candidates come directly from baseline evidence:
+answer/result correctness, tool validity, recovery, grounding, multi-observation completion,
+and bounded efficiency penalties.
 
 # GRPO
 
-Not started. No ART/GRPO update, LoRA adapter, or training result is claimed.
+Not started. No ART/GRPO update, LoRA adapter, checkpoint, or improvement is claimed.
 
 # Evaluation
 
-No real-model validation metric exists yet. Frozen test has not been used.
+Validation baseline only. Frozen test has not been opened for tuning or reporting.
 
 # Known Failures
 
-- No authenticated Linux vLLM `/v1` endpoint is available.
-- Real `/v1/models` identity, tool-call compatibility, OOM stability, and GPU utilization remain
-  unverified.
-- Agentic behavior and shortcuts cannot be assessed without real-model trajectories.
+- SQL + Calculator frequently uses the wrong profit-rate denominator.
+- Multi-query tasks often waste steps guessing nonexistent tables and terminate at max_steps.
+- Correct tool outcomes are sometimes rounded or rewritten imprecisely in the final answer,
+  causing strict grounding/accuracy failure.
 
 # Risks
 
-1. A Linux GPU with insufficient headroom may OOM under the BF16 9B configuration; record peak VRAM
-   during the 20-task smoke before raising concurrency.
-2. Qwen may emit malformed tool calls or shortcut templated tasks; the smoke gate must classify this
-   before the 150-task run.
-3. CP5 reward design would be speculative if started before the canonical failure set exists.
+1. A reward dominated by SQL execution would reinforce wrong arithmetic semantics.
+2. A reward dominated by final-answer matching could ignore loops and weak tool grounding.
+3. Recovery rate alone is easy to overread because any later successful tool call is not
+   necessarily a correct recovery; CP5 must inspect recovery trajectories explicitly.
 
 # Deferred Work
 
-SFT, formal GRPO, Docker Compose, W&B dashboards, UI, MCP, Redis, broad benchmarks, multi-model
-comparison, hyperparameter search, and extra reward ablations.
+SFT baseline, formal GRPO, Docker Compose, W&B dashboards, UI, MCP, Redis, multi-model search,
+large hyperparameter search, and additional reward ablations.
 
 # Files Changed
 
-- `configs/cp4_qwen35_9b.toml`
-- `scripts/serve_qwen35_9b.sh`
 - `src/research_router_opt/backend.py`
+- `src/research_router_opt/verifier.py`
 - `src/research_router_opt/baseline.py`
-- `tests/test_baseline.py`
+- `scripts/rescore_baseline.py`
+- `configs/cp4_qwen35_9b.toml`
+- `tests/test_backend.py`
+- `tests/test_verifier.py`
 - `BASELINE_REPORT.md`
 - `PROJECT_STATUS.md`
 
 # Reproduction Commands
 
-Linux server:
-
-```bash
-bash scripts/serve_qwen35_9b.sh
-```
-
-20-task validation smoke from PowerShell:
-
 ```powershell
-$env:VLLM_BASE_URL="http://<linux-gpu-host>:8000/v1"
-$env:VLLM_API_KEY="EMPTY"
-$env:BASELINE_GPU_NAME="<exact GPU name>"
-$env:BASELINE_GPU_VRAM="<total VRAM>"
-$env:BASELINE_GPU_DRIVER="<driver version>"
-uv --cache-dir .uv-cache run python -m research_router_opt.baseline `
-  --config configs/cp4_qwen35_9b.toml `
-  --phase smoke `
-  --limit 20 `
-  --output results/diagnostics/cp4-smoke-001
+uv --cache-dir .uv-cache run pytest -q
+uv --cache-dir .uv-cache run ruff check .
+uv --cache-dir .uv-cache run mypy src scripts/rescore_baseline.py
 ```
 
-150-task canonical validation, only after manual smoke review marks PASS:
-
-```powershell
-uv --cache-dir .uv-cache run python -m research_router_opt.baseline `
-  --config configs/cp4_qwen35_9b.toml `
-  --phase canonical `
-  --limit 150 `
-  --output results/baseline/cp4-qwen35-9b-validation-001
-```
+Canonical and offline-rescore commands are recorded in `BASELINE_REPORT.md`.
 
 # Git State
 
 Branch: `codex/agent-grpo-cp4-baseline`.
 
-Gate A freeze commit: `ada7ec332cfc4655c9f5403f9c1d9f4787c3f877`.
+Gate A commit: `ada7ec332cfc4655c9f5403f9c1d9f4787c3f877`.
 
-CP4 runner/config commit: `e358e8c24ae592ca91cbde9331570913e4a09036`.
+Canonical rollout commit: `670cdbda572697dae3690a275579a5b94c53bad0`.
 
-Working tree is expected to be clean after this status/report update is committed. Every actual
-baseline manifest records the runtime commit and clean-tree state at execution time.
+Verifier audit commit: `ddd656e2de9e8461f8c2db15dbc08328c8aa3f85`.
+
+Documentation update remains to be committed; working tree should be clean afterward.
 
 # Next 1–3 Actions
 
-1. Provide or start an authenticated Linux GPU endpoint and run `scripts/serve_qwen35_9b.sh`.
-2. Run and manually audit the 20-task validation smoke for engineering stability, genuine multi-turn
-   behavior, difficulty, and shortcuts.
-3. If and only if smoke passes, run all 150 validation tasks and hand the persisted trajectories to
-   CP5 for CPU-only reward audit.
+1. Release the inference GPU; retain the model/checkpoint only if CP6 will start immediately.
+2. Run CP5 reward decomposition over the saved audited trajectories on CPU.
+3. Audit reward separation and hacking candidates before any GRPO smoke test.
