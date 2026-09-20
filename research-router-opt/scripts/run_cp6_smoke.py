@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import os
 import subprocess
 import threading
 import time
@@ -83,7 +84,7 @@ def _art_model(config: Any, payload: dict[str, Any]) -> Any:
         name="qwen35-9b-cp6-smoke",
         run_name="cp6-minimal-grpo-smoke",
         project="agentic-rl-grpo",
-        base_model=config.base_model,
+        base_model=os.environ.get("CP6_MODEL_PATH", config.base_model),
         lora_config=art.LoRAConfig(
             rank=config.lora_rank,
             alpha=config.lora_alpha,
@@ -287,6 +288,8 @@ async def train(config_path: Path, output_dir: Path) -> None:
     evidence = {
         "phase": "train",
         "config": payload,
+        "canonical_base_model": config.base_model,
+        "resolved_base_model": model.base_model,
         "train_task_ids": [task.task_id for task in tasks],
         "group_audits": [audit.to_dict() for audit in audits],
         "training": {
@@ -339,6 +342,8 @@ async def reload(config_path: Path, output_dir: Path) -> None:
         output_dir / "reload_evidence.json",
         {
             "phase": "fresh_process_reload",
+            "canonical_base_model": config.base_model,
+            "resolved_base_model": model.base_model,
             "loaded_step": step,
             "reward": trajectory.reward,
             "post_update_record": record,
