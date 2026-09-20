@@ -44,3 +44,29 @@ def test_vllm_backend_sends_frozen_seed(monkeypatch: Any) -> None:
     assert captured["temperature"] == 0.0
     assert captured["seed"] == 20260920
     assert captured["timeout"] == 3.0
+
+
+def test_vllm_backend_captures_stochastic_art_choice(monkeypatch: Any) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_urlopen(request: Any, *, timeout: float) -> _Response:
+        del timeout
+        captured.update(json.loads(request.data.decode()))
+        return _Response()
+
+    monkeypatch.setattr("research_router_opt.backend.urlopen", fake_urlopen)
+    backend = VLLMBackend(
+        base_url="http://localhost:8000/v1",
+        model="Qwen/Qwen3.5-9B",
+        temperature=0.8,
+        top_p=0.95,
+        capture_choices=True,
+    )
+    backend.generate([AgentMessage(role="user", content="hello")], [], timeout_s=3.0)
+
+    assert captured["temperature"] == 0.8
+    assert captured["top_p"] == 0.95
+    assert captured["logprobs"] is True
+    assert backend.raw_choices[0]["message"]["content"] == "done"
+    backend.reset()
+    assert backend.raw_choices == []
