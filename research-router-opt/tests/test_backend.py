@@ -16,7 +16,15 @@ class _Response:
 
     def read(self) -> bytes:
         return json.dumps(
-            {"choices": [{"message": {"content": "done", "tool_calls": []}}]}
+            {
+                "prompt_token_ids": [1, 2, 3],
+                "choices": [
+                    {
+                        "message": {"content": "done", "tool_calls": []},
+                        "token_ids": [4, 5],
+                    }
+                ],
+            }
         ).encode()
 
 
@@ -67,6 +75,10 @@ def test_vllm_backend_captures_stochastic_art_choice(monkeypatch: Any) -> None:
     assert captured["temperature"] == 0.8
     assert captured["top_p"] == 0.95
     assert captured["logprobs"] is True
+    assert captured["return_token_ids"] is True
+    assert captured["return_tokens_as_token_ids"] is True
     assert backend.raw_choices[0]["message"]["content"] == "done"
+    assert backend.raw_choices[0]["prompt_token_ids"] == [1, 2, 3]
+    assert backend.raw_choices[0]["token_ids"] == [4, 5]
     backend.reset()
     assert backend.raw_choices == []

@@ -112,6 +112,8 @@ class VLLMBackend:
         }
         if self.capture_choices:
             payload["logprobs"] = True
+            payload["return_token_ids"] = True
+            payload["return_tokens_as_token_ids"] = True
         request = Request(
             f"{self.base_url}/chat/completions",
             data=json.dumps(payload).encode("utf-8"),
@@ -125,7 +127,15 @@ class VLLMBackend:
             body = json.loads(response.read().decode("utf-8"))
         raw_choice = cast(dict[str, Any], body["choices"][0])
         if self.capture_choices:
-            self.raw_choices.append(raw_choice)
+            prompt_token_ids = body.get("prompt_token_ids")
+            completion_token_ids = raw_choice.get("token_ids")
+            if prompt_token_ids is None or completion_token_ids is None:
+                raise RuntimeError(
+                    "vLLM response omitted token IDs required by ART training."
+                )
+            captured_choice = dict(raw_choice)
+            captured_choice["prompt_token_ids"] = prompt_token_ids
+            self.raw_choices.append(captured_choice)
         message = cast(dict[str, Any], raw_choice["message"])
         tool_calls = cast(list[dict[str, Any]], message.get("tool_calls") or [])
         if tool_calls:
