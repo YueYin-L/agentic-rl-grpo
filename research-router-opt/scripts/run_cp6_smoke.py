@@ -308,7 +308,7 @@ async def train(config_path: Path, output_dir: Path) -> None:
             learning_rate=config.learning_rate,
             loss_fn=str(cast(dict[str, Any], payload["training"])["loss_fn"]),
             scale_rewards=True,
-            logprob_calculation_chunk_size=64,
+            logprob_calculation_chunk_size=config.logprob_calculation_chunk_size,
             packed_sequence_length=config.max_seq_length,
             grad_accumulation_sequences=config.gradient_accumulation_sequences,
             save_checkpoint=True,
