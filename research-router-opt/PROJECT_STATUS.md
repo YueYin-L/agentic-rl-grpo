@@ -1,10 +1,10 @@
 # Current Phase
 
-DAY 2 — CP6 Minimal GRPO Smoke Test PASS; awaiting Gate B/CP7 configuration review.
+DAY 3 — CP7 formal GRPO configuration frozen; final preflight pending before launch.
 
 # Sprint Day
 
-DAY 2
+DAY 3
 
 # Latest Work
 
@@ -26,6 +26,12 @@ DAY 2
 - Proved non-degenerate reward groups, a real optimizer update, 256/256 changed LoRA tensors,
   checkpoint save, fresh-process step-1 reload, and a successful post-update tool-use trajectory.
 - Preserved CP6 evidence locally and did not access the frozen test split or start formal training.
+- Froze CP7 at 100 updates, group size 4, validation/checkpoint cadence 20, and the unchanged CP5
+  reward/model/runtime/dataset protocol requested for the controlled formal run.
+- Added deterministic train scheduling, non-degenerate-group gating, full 150-task validation at
+  milestones, validation stop guards, checkpoint ranking, and an evidence-first report writer.
+- Rechecked the frozen hashes and completed a successful CP6-equivalent preflight rollout on the
+  96 GB Blackwell host. A final smoke will be repeated after the CP7 code commit is synchronized.
 
 # Checkpoint Status
 
@@ -42,17 +48,17 @@ CP5: PASS — canonical `configs/cp5_reward.toml` frozen after offline reward an
 
 CP6: PASS — canonical run `cp6-smoke-015`; full rollout-to-reload engineering loop proven.
 
-CP7: NOT STARTED.
+CP7: READY, NOT STARTED — configuration/code frozen; final commit-synchronized preflight required.
 
 CP8: NOT STARTED — frozen test remains unused.
 
 # Tests
 
-pytest: PASS — 35 tests.
+pytest: PASS — 39 tests.
 
 Ruff: PASS.
 
-MyPy: PASS — 23 checked source/CPU-script files. The optional GPU-only
+MyPy: PASS — 24 checked source/CPU-script files. The optional GPU-only
 `scripts/run_cp6_smoke.py` is runtime-validated on Linux but excluded from the local MyPy gate
 because ART, OpenAI, safetensors, and torch are intentionally absent from the CPU dev environment.
 
@@ -64,7 +70,7 @@ Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical 
 
 Cloud GPU: NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, driver 580.82.09.
 
-GPU currently required: NO for CP6 reporting; YES only when CP7 formal training is approved.
+GPU currently required: YES — CP7 formal training is approved and in final preflight.
 
 # Dataset
 
@@ -159,11 +165,14 @@ large hyperparameter search, and additional reward ablations.
 - `scripts/rescore_baseline.py`
 - `scripts/analyze_rewards.py`
 - `scripts/run_cp6_smoke.py`
+- `scripts/run_cp7_training.py`
 - `configs/cp4_qwen35_9b.toml`
 - `configs/cp5_reward.toml`
 - `configs/cp6_grpo_smoke.toml`
+- `configs/cp7_grpo_formal.toml`
 - `tests/test_backend.py`
 - `tests/test_art_rollout.py`
+- `tests/test_grpo_training.py`
 - `tests/test_verifier.py`
 - `tests/test_reward.py`
 - `BASELINE_REPORT.md`
@@ -204,6 +213,6 @@ for the pre-existing untracked `cp6-update.bundle`.
 
 # Next 1–3 Actions
 
-1. Review `CP6_SMOKE_REPORT.md` and approve one bounded CP7 formal-training configuration.
-2. Freeze CP7 task sample, update budget, validation cadence, seed, and reward-hacking stop rule.
-3. Run CP7 without touching frozen test; use CP8 only after the final adapter is selected.
+1. Commit and synchronize the frozen CP7 configuration/orchestration to the GPU host.
+2. Repeat the commit-synchronized CP6-equivalent smoke and refuse launch on any mismatch.
+3. Start `cp7-formal-grpo-001`, monitor until stable, then pause with an evidence-based ETA.

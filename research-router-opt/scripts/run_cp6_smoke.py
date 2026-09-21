@@ -85,14 +85,21 @@ def _openai_server_config(art: Any, payload: dict[str, Any]) -> Any:
     )
 
 
-def _art_model(config: Any, payload: dict[str, Any]) -> Any:
+def _art_model(
+    config: Any,
+    payload: dict[str, Any],
+    *,
+    model_name: str = "qwen35-9b-cp6-smoke",
+    run_name: str = "cp6-minimal-grpo-smoke",
+    project: str = "agentic-rl-grpo",
+) -> Any:
     import art
 
     lora = cast(dict[str, Any], payload["lora"])
     return art.TrainableModel(
-        name="qwen35-9b-cp6-smoke",
-        run_name="cp6-minimal-grpo-smoke",
-        project="agentic-rl-grpo",
+        name=model_name,
+        run_name=run_name,
+        project=project,
         base_model=os.environ.get("CP6_MODEL_PATH", config.base_model),
         lora_config=art.LoRAConfig(
             rank=config.lora_rank,
