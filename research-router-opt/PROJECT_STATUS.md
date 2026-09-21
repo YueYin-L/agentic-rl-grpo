@@ -1,6 +1,6 @@
 # Current Phase
 
-DAY 3 — CP7 formal GRPO configuration frozen; final preflight pending before launch.
+DAY 3 — CP7 formal GRPO run `cp7-formal-grpo-001` is running on the 96 GB GPU.
 
 # Sprint Day
 
@@ -31,7 +31,11 @@ DAY 3
 - Added deterministic train scheduling, non-degenerate-group gating, full 150-task validation at
   milestones, validation stop guards, checkpoint ranking, and an evidence-first report writer.
 - Rechecked the frozen hashes and completed a successful CP6-equivalent preflight rollout on the
-  96 GB Blackwell host. A final smoke will be repeated after the CP7 code commit is synchronized.
+  96 GB Blackwell host.
+- Synchronized commit `29f7206`, repeated the smoke without parser/OOM/runtime failure, and
+  launched the formal run as background PID 17703 without loading the frozen test split.
+- First effective update PASS: 4 trajectories, reward mean/std 5.425/0.075, rollout 48.1 s,
+  update 179.7 s, non-zero loss/gradient/entropy, and approximately 61 GB peak VRAM.
 
 # Checkpoint Status
 
@@ -48,7 +52,7 @@ CP5: PASS — canonical `configs/cp5_reward.toml` frozen after offline reward an
 
 CP6: PASS — canonical run `cp6-smoke-015`; full rollout-to-reload engineering loop proven.
 
-CP7: READY, NOT STARTED — configuration/code frozen; final commit-synchronized preflight required.
+CP7: RUNNING — `cp7-formal-grpo-001`, commit `29f7206`, step 1/100 at last observation.
 
 CP8: NOT STARTED — frozen test remains unused.
 
@@ -70,7 +74,7 @@ Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical 
 
 Cloud GPU: NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, driver 580.82.09.
 
-GPU currently required: YES — CP7 formal training is approved and in final preflight.
+GPU currently required: YES — CP7 formal training is active; do not release the instance.
 
 # Dataset
 
@@ -129,6 +133,10 @@ A fresh process loaded step 1 and completed a six-step Schema -> SQL -> SQL -> S
 trajectory with verifier success and reward 5.50. This proves pipeline integrity only; no policy
 improvement is claimed before CP7/CP8 evaluation.
 
+CP7 formal run `cp7-formal-grpo-001` is active from the base model at ART step 0. The first update
+completed successfully. Validation and checkpoint gates occur at steps 20, 40, 60, 80, and 100;
+the guard compares reward, Task Success, grounding, invalid calls, and max-step termination.
+
 # Evaluation
 
 Validation baseline only. Frozen test has not been opened for tuning or reporting.
@@ -143,7 +151,7 @@ Validation baseline only. Frozen test has not been opened for tuning or reportin
 
 # Risks
 
-1. Strict answer formatting and verifier coverage can still shape outcome reward; CP6 must monitor
+1. Strict answer formatting and verifier coverage can still shape outcome reward; CP7 must monitor
    task success and reward together.
 2. The single validated correct SQL+Calculator baseline case makes arithmetic pairwise evidence
    directionally strong but sample-limited.
@@ -154,8 +162,8 @@ Validation baseline only. Frozen test has not been opened for tuning or reportin
 
 # Deferred Work
 
-SFT baseline, formal GRPO, Docker Compose, W&B dashboards, UI, MCP, Redis, multi-model search,
-large hyperparameter search, and additional reward ablations.
+SFT baseline, Docker Compose, W&B dashboards, UI, MCP, Redis, multi-model search, large
+hyperparameter search, and additional reward ablations.
 
 # Files Changed
 
@@ -208,11 +216,12 @@ CP5 audit-signal commit: `fde828b9532542fe35ff72250a591a4b13f2148a`.
 
 CP6 runtime/config commit: `20987f6`.
 
-CP6 report/status update remains to be committed; working tree should be clean afterward except
-for the pre-existing untracked `cp6-update.bundle`.
+CP6 report commit: `45000a6`.
+
+CP7 frozen training implementation/run commit: `29f7206`.
 
 # Next 1–3 Actions
 
-1. Commit and synchronize the frozen CP7 configuration/orchestration to the GPU host.
-2. Repeat the commit-synchronized CP6-equivalent smoke and refuse launch on any mismatch.
-3. Start `cp7-formal-grpo-001`, monitor until stable, then pause with an evidence-based ETA.
+1. Resume inspection at the first step-20 validation gate or after the estimated completion window.
+2. If a validation guard stops training, audit its trajectories before any restart.
+3. After completion, preserve best/last checkpoints and review CP7 before any CP8 frozen-test use.
