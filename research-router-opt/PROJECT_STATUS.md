@@ -1,6 +1,6 @@
 # Current Phase
 
-DAY 2 — CP5 offline reward audit PASS; ready to prepare CP6 Minimal GRPO Smoke Test.
+DAY 2 — CP6 Minimal GRPO Smoke Test PASS; awaiting Gate B/CP7 configuration review.
 
 # Sprint Day
 
@@ -21,6 +21,11 @@ DAY 2
   25 superficial recoveries among 32 broadly recovered trajectories.
 - Compared three bounded reward candidates and froze the outcome-dominant balanced configuration.
 - Persisted per-trajectory reward decompositions and passed all offline ordering/hacking checks.
+- Completed canonical CP6 run `cp6-smoke-015` on the exact Qwen3.5-9B revision with ART 0.5.20,
+  vLLM 0.25.1, BF16, and LoRA r8.
+- Proved non-degenerate reward groups, a real optimizer update, 256/256 changed LoRA tensors,
+  checkpoint save, fresh-process step-1 reload, and a successful post-update tool-use trajectory.
+- Preserved CP6 evidence locally and did not access the frozen test split or start formal training.
 
 # Checkpoint Status
 
@@ -35,7 +40,7 @@ CP4: PASS — smoke `cp4-smoke-004`; canonical rollout `cp4-canonical-001`; audi
 
 CP5: PASS — canonical `configs/cp5_reward.toml` frozen after offline reward and hacking audit.
 
-CP6: READY, NOT STARTED — only Minimal GRPO Smoke Test preparation is authorized.
+CP6: PASS — canonical run `cp6-smoke-015`; full rollout-to-reload engineering loop proven.
 
 CP7: NOT STARTED.
 
@@ -43,11 +48,13 @@ CP8: NOT STARTED — frozen test remains unused.
 
 # Tests
 
-pytest: PASS — 30 tests.
+pytest: PASS — 35 tests.
 
 Ruff: PASS.
 
-MyPy: PASS — 22 checked source/script files.
+MyPy: PASS — 23 checked source/CPU-script files. The optional GPU-only
+`scripts/run_cp6_smoke.py` is runtime-validated on Linux but excluded from the local MyPy gate
+because ART, OpenAI, safetensors, and torch are intentionally absent from the CPU dev environment.
 
 # Compute
 
@@ -55,9 +62,9 @@ CPU: PASS for runtime, environment, verifier, tests, aggregation, and offline re
 
 Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical baseline.
 
-Cloud GPU: NVIDIA GeForce RTX 4080 SUPER, 32760 MiB, driver 595.71.05.
+Cloud GPU: NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, driver 580.82.09.
 
-GPU currently required: NO — CP5 is complete; provision GPU only when CP6 smoke is ready to run.
+GPU currently required: NO for CP6 reporting; YES only when CP7 formal training is approved.
 
 # Dataset
 
@@ -108,8 +115,13 @@ superficial recovery. `tool_valid` and `sql_exec_success` receive no positive re
 
 # GRPO
 
-Not started. CP6 may perform only a minimal ART/GRPO/LoRA save-reload smoke; no formal training,
-checkpoint quality, or improvement is claimed.
+CP6 engineering smoke PASS. Run `cp6-smoke-015` used 3 train tasks x 4 generations, producing 12
+trajectories with non-zero reward variance in every group. ART advanced from step 0 to step 1;
+all 256 compared LoRA tensors changed (global delta L2 0.253665), and the step-1 adapter was saved.
+
+A fresh process loaded step 1 and completed a six-step Schema -> SQL -> SQL -> SQL -> Calculator
+trajectory with verifier success and reward 5.50. This proves pipeline integrity only; no policy
+improvement is claimed before CP7/CP8 evaluation.
 
 # Evaluation
 
@@ -131,6 +143,8 @@ Validation baseline only. Frozen test has not been opened for tuning or reportin
    directionally strong but sample-limited.
 3. Process-richer weights slightly reduce the efficiency margin, so they remain rejected rather
    than being promoted because of marginally larger mean separation.
+4. ART/vLLM/CUDA compatibility is version-sensitive: the validated Blackwell runtime requires an
+   explicit CUDA runtime path and the FlashInfer sampler disabled.
 
 # Deferred Work
 
@@ -144,13 +158,18 @@ large hyperparameter search, and additional reward ablations.
 - `src/research_router_opt/baseline.py`
 - `scripts/rescore_baseline.py`
 - `scripts/analyze_rewards.py`
+- `scripts/run_cp6_smoke.py`
 - `configs/cp4_qwen35_9b.toml`
 - `configs/cp5_reward.toml`
+- `configs/cp6_grpo_smoke.toml`
 - `tests/test_backend.py`
+- `tests/test_art_rollout.py`
 - `tests/test_verifier.py`
 - `tests/test_reward.py`
 - `BASELINE_REPORT.md`
 - `REWARD_ANALYSIS.md`
+- `CP6_SMOKE_REPORT.md`
+- `TRAINING_GPU_PLAN.md`
 - `PROJECT_STATUS.md`
 
 # Reproduction Commands
@@ -162,6 +181,7 @@ uv --cache-dir .uv-cache run mypy src scripts/rescore_baseline.py scripts/analyz
 ```
 
 Canonical and offline-rescore commands are recorded in `BASELINE_REPORT.md`.
+CP6 Linux commands and evidence are recorded in `CP6_SMOKE_REPORT.md`.
 
 # Git State
 
@@ -177,10 +197,13 @@ CP5 implementation commit: `ccd8430cbf9ae7a07a6bb4073bd2c74df78ea95c`.
 
 CP5 audit-signal commit: `fde828b9532542fe35ff72250a591a4b13f2148a`.
 
-CP5 report/status update remains to be committed; working tree should be clean afterward.
+CP6 runtime/config commit: `20987f6`.
+
+CP6 report/status update remains to be committed; working tree should be clean afterward except
+for the pre-existing untracked `cp6-update.bundle`.
 
 # Next 1–3 Actions
 
-1. Inspect the currently installed ART API and freeze a minimal CP6 smoke configuration.
-2. Select a few train tasks only, prove rollout -> reward -> LoRA update -> save -> reload.
-3. Verify adapter parameters changed and a post-update rollout works; do not start formal GRPO.
+1. Review `CP6_SMOKE_REPORT.md` and approve one bounded CP7 formal-training configuration.
+2. Freeze CP7 task sample, update budget, validation cadence, seed, and reward-hacking stop rule.
+3. Run CP7 without touching frozen test; use CP8 only after the final adapter is selected.

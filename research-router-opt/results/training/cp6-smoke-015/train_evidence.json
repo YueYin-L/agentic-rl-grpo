@@ -1,0 +1,173 @@
+{
+  "phase": "train",
+  "config": {
+    "model": {
+      "id": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "precision": "bfloat16",
+      "quantization": "none",
+      "max_seq_length": 4096,
+      "tool_call_parser": "qwen3_xml"
+    },
+    "reward": {
+      "config": "configs/cp5_reward.toml"
+    },
+    "dataset": {
+      "path": "data/analysis_train.jsonl",
+      "sha256": "d2334fe84e165519be152054e433a4966b8ea7862197a5c7d14f412d2a4a0292",
+      "task_ids": [
+        "train-sql_calculator-0003",
+        "train-multi_query_aggregation-0004",
+        "train-multi_table_reasoning-0001"
+      ]
+    },
+    "runtime": {
+      "max_steps": 10,
+      "model_timeout_s": 180.0,
+      "tool_timeout_s": 5.0
+    },
+    "rollout": {
+      "group_size": 4,
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "max_output_tokens": 768
+    },
+    "training": {
+      "grpo_steps": 1,
+      "gradient_accumulation_sequences": 1,
+      "trainer_num_generations": 2,
+      "logprob_calculation_chunk_size": 8,
+      "learning_rate": 5e-06,
+      "loss_fn": "ppo",
+      "scale_rewards": true
+    },
+    "lora": {
+      "rank": 8,
+      "alpha": 16,
+      "dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    },
+    "art": {
+      "version": "0.5.20",
+      "backend": "LocalBackend",
+      "path": "/root/autodl-tmp/art-cp6"
+    },
+    "compute": {
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "vram_mib": 97887,
+      "cuda_profile": "cu130"
+    }
+  },
+  "canonical_base_model": "Qwen/Qwen3.5-9B",
+  "resolved_base_model": "/root/autodl-tmp/hf-cache/hub/models--Qwen--Qwen3.5-9B/snapshots/c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "train_task_ids": [
+    "train-sql_calculator-0003",
+    "train-multi_query_aggregation-0004",
+    "train-multi_table_reasoning-0001"
+  ],
+  "group_audits": [
+    {
+      "task_id": "train-sql_calculator-0003",
+      "rewards": [
+        5.45,
+        -2.8,
+        -2.8,
+        -5.4
+      ],
+      "mean": -1.3875,
+      "std": 4.087844,
+      "variance": 16.710469,
+      "degenerate": false
+    },
+    {
+      "task_id": "train-multi_query_aggregation-0004",
+      "rewards": [
+        -3.8,
+        -5.15,
+        -4.4,
+        5.75
+      ],
+      "mean": -1.9,
+      "std": 4.44255,
+      "variance": 19.73625,
+      "degenerate": false
+    },
+    {
+      "task_id": "train-multi_table_reasoning-0001",
+      "rewards": [
+        5.75,
+        -2.95,
+        5.35,
+        -2.8
+      ],
+      "mean": 1.3375,
+      "std": 4.215207,
+      "variance": 17.767969,
+      "degenerate": false
+    }
+  ],
+  "training": {
+    "initial_step": 0,
+    "result_step": 1,
+    "metrics": {
+      "data/step_num_scenarios": 3.0,
+      "data/step_num_trajectories": 12.0,
+      "data/step_num_groups_submitted": 3.0,
+      "data/step_num_groups_trainable": 3.0,
+      "data/step_trainable_assistant_tokens": 14853.0,
+      "data/step_packed_sequences": 82.0,
+      "data/step_nonpadding_logical_tokens": 118471.0,
+      "data/step_loss_bearing_tokens": 14853.0,
+      "data/step_executed_token_equivalents": 335872.0,
+      "data/step_nominal_schedule_capacity_tokens": 335872.0,
+      "data/step_dummy_executed_token_equivalents": 0.0,
+      "data/step_dummy_schedule_capacity_tokens": 0.0,
+      "data/step_unused_packed_capacity_tokens": 217401.0,
+      "data/step_unused_and_dummy_ratio": 0.6472733660442083,
+      "prefix_tree/logical_tokens": 118471.0,
+      "prefix_tree/physical_tokens": 118471.0,
+      "prefix_tree/compression_ratio": 1.0,
+      "loss/train": 0.28016112817496786,
+      "loss/grad_norm": 1.3719941981863686,
+      "loss/learning_rate": 5.000000000000009e-06,
+      "loss/entropy": 0.39501815950412805,
+      "data/step_num_gradient_steps": 82.0,
+      "time/step_backend_train_s": 611.9594265371561
+    },
+    "rollout_time_s": 244.00277220085263,
+    "training_time_s": 611.9596873223782,
+    "total_time_s": 1031.4019616097212
+  },
+  "adapter_before": {
+    "step": 0,
+    "path": "/root/autodl-tmp/art-cp6/agentic-rl-grpo/models/cp6-minimal-grpo-smoke/checkpoints/0000",
+    "sha256": "2f96cc1bd277c2921732baeff5ad5c322504f14fb2a41b93ee5d007efa0f5fcb",
+    "file_count": 8
+  },
+  "adapter_after": {
+    "step": 1,
+    "path": "/root/autodl-tmp/art-cp6/agentic-rl-grpo/models/cp6-minimal-grpo-smoke/checkpoints/0001",
+    "sha256": "233a0c5ea68f872cddce889da36481cb6b21ee590f623972cce285e5e5906b7c",
+    "file_count": 8
+  },
+  "parameter_delta": {
+    "common_tensor_count": 256,
+    "changed_tensor_count": 256,
+    "global_delta_l2": 0.2536653124478139,
+    "max_abs_delta": 0.0015883496962487698
+  },
+  "compute": {
+    "peak_gpu_memory_mib_nvidia_smi": 61434,
+    "peak_torch_allocated_mib": 0.0,
+    "peak_torch_reserved_mib": 0.0,
+    "oom": false
+  }
+}

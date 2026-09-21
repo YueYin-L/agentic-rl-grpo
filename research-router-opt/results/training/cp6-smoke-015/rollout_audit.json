@@ -1,0 +1,50 @@
+{
+  "train_task_ids": [
+    "train-sql_calculator-0003",
+    "train-multi_query_aggregation-0004",
+    "train-multi_table_reasoning-0001"
+  ],
+  "trajectory_count": 12,
+  "rollout_time_s": 244.00277220085263,
+  "group_audits": [
+    {
+      "task_id": "train-sql_calculator-0003",
+      "rewards": [
+        5.45,
+        -2.8,
+        -2.8,
+        -5.4
+      ],
+      "mean": -1.3875,
+      "std": 4.087844,
+      "variance": 16.710469,
+      "degenerate": false
+    },
+    {
+      "task_id": "train-multi_query_aggregation-0004",
+      "rewards": [
+        -3.8,
+        -5.15,
+        -4.4,
+        5.75
+      ],
+      "mean": -1.9,
+      "std": 4.44255,
+      "variance": 19.73625,
+      "degenerate": false
+    },
+    {
+      "task_id": "train-multi_table_reasoning-0001",
+      "rewards": [
+        5.75,
+        -2.95,
+        5.35,
+        -2.8
+      ],
+      "mean": 1.3375,
+      "std": 4.215207,
+      "variance": 17.767969,
+      "degenerate": false
+    }
+  ]
+}

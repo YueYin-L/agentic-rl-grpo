@@ -24,8 +24,8 @@ Gate A requires human review of agentic task quality and verifier correctness.
 - [x] Freeze runtime/prompt settings and run the 150-task canonical validation baseline.
 - [x] Produce task-type metrics and programmatic failure-mode analysis.
 - [x] Design a small reward from observed failures and audit it offline on baseline trajectories.
-- [ ] Integrate the installed ART API, vLLM rollout, and LoRA update using current official versions.
-- [ ] Prove adapter parameter change, save/reload, and a post-update rollout.
+- [x] Integrate the installed ART API, vLLM rollout, and LoRA update using current installed versions.
+- [x] Prove adapter parameter change, save/reload, and a post-update rollout.
 
 Gate B requires human review of whether the observed failures are real, learnable, and correctly
 represented by the proposed reward.
