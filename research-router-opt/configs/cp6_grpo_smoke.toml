@@ -50,6 +50,6 @@ backend = "LocalBackend"
 path = "/root/autodl-tmp/art-cp6"
 
 [compute]
-gpu = "NVIDIA GeForce RTX 4080 SUPER"
-vram_mib = 32760
+gpu = "NVIDIA RTX PRO 6000 Blackwell Server Edition"
+vram_mib = 97887
 cuda_profile = "cu130"
