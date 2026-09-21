@@ -127,6 +127,7 @@ def _art_model(config: Any, payload: dict[str, Any]) -> Any:
             trainer_args=art.dev.TrainerArgs(
                 per_device_train_batch_size=1,
                 gradient_accumulation_steps=config.gradient_accumulation_sequences,
+                num_generations=config.trainer_num_generations,
                 bf16=True,
                 max_grad_norm=0.1,
                 logging_steps=1,

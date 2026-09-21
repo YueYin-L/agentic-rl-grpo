@@ -32,6 +32,7 @@ max_output_tokens = 768
 [training]
 grpo_steps = 1
 gradient_accumulation_sequences = 1
+trainer_num_generations = 1
 learning_rate = 5e-6
 loss_fn = "ppo"
 scale_rewards = true

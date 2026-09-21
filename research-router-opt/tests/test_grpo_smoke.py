@@ -32,6 +32,7 @@ def test_smoke_config_loads_multiple_rollouts() -> None:
     assert config.group_size == 4
     assert config.grpo_steps == 1
     assert config.gradient_accumulation_sequences == 1
+    assert config.trainer_num_generations == 1
     assert config.reward_config == "configs/cp5_reward.toml"
 
 

@@ -24,6 +24,7 @@ class SmokeConfig:
     group_size: int
     grpo_steps: int
     gradient_accumulation_sequences: int
+    trainer_num_generations: int
     temperature: float
     top_p: float
     max_output_tokens: int
@@ -42,6 +43,8 @@ class SmokeConfig:
             raise ValueError("grpo_steps must be positive.")
         if self.gradient_accumulation_sequences < 1:
             raise ValueError("gradient_accumulation_sequences must be positive.")
+        if self.trainer_num_generations < 1:
+            raise ValueError("trainer_num_generations must be positive.")
         if self.temperature <= 0:
             raise ValueError("Smoke rollouts must use stochastic sampling.")
 
@@ -92,6 +95,7 @@ def load_smoke_config(path: Path) -> SmokeConfig:
         gradient_accumulation_sequences=int(
             training["gradient_accumulation_sequences"]
         ),
+        trainer_num_generations=int(training["trainer_num_generations"]),
         temperature=float(rollout["temperature"]),
         top_p=float(rollout["top_p"]),
         max_output_tokens=int(rollout["max_output_tokens"]),
