@@ -54,5 +54,6 @@ and audit trajectories before spending more GPU time.
 
 ## Release Decision
 
-CP6 artifacts have been copied off the GPU host. If CP7 will not begin immediately, the cloud GPU
-can be released. CP5-style reward analysis and CP6 report inspection are CPU-only.
+CP6 evidence and the complete step-1 checkpoint have been copied off the GPU host. If CP7 will not
+begin immediately, the cloud GPU can be released. CP5-style reward analysis and CP6 report
+inspection are CPU-only.

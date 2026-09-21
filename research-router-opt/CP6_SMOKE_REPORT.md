@@ -138,6 +138,11 @@ The ART checkpoint is stored on the training host at:
 
 `/root/autodl-tmp/art-cp6/agentic-rl-grpo/models/cp6-minimal-grpo-smoke/checkpoints/0001`
 
+A complete 78,246,288-byte recovery copy is also stored locally in the gitignored directory
+`results/training/cp6-smoke-015/checkpoint-0001/`. The local and remote
+`adapter_model.safetensors` SHA-256 is
+`22a1e4823da298db2349a91adb7c37092061a19b631b09688e62eb9c4eb35348`.
+
 ## CP7 Handoff
 
 CP7 may now prepare one canonical formal GRPO configuration. Before training, freeze the task
