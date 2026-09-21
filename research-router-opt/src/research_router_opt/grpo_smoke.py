@@ -23,6 +23,7 @@ class SmokeConfig:
     train_task_ids: tuple[str, ...]
     group_size: int
     grpo_steps: int
+    gradient_accumulation_sequences: int
     temperature: float
     top_p: float
     max_output_tokens: int
@@ -39,6 +40,8 @@ class SmokeConfig:
             raise ValueError("At least one train task is required.")
         if self.grpo_steps < 1:
             raise ValueError("grpo_steps must be positive.")
+        if self.gradient_accumulation_sequences < 1:
+            raise ValueError("gradient_accumulation_sequences must be positive.")
         if self.temperature <= 0:
             raise ValueError("Smoke rollouts must use stochastic sampling.")
 
@@ -86,6 +89,9 @@ def load_smoke_config(path: Path) -> SmokeConfig:
         train_task_ids=tuple(str(value) for value in dataset["task_ids"]),
         group_size=int(rollout["group_size"]),
         grpo_steps=int(training["grpo_steps"]),
+        gradient_accumulation_sequences=int(
+            training["gradient_accumulation_sequences"]
+        ),
         temperature=float(rollout["temperature"]),
         top_p=float(rollout["top_p"]),
         max_output_tokens=int(rollout["max_output_tokens"]),

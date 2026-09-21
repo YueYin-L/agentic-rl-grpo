@@ -126,7 +126,7 @@ def _art_model(config: Any, payload: dict[str, Any]) -> Any:
             ),
             trainer_args=art.dev.TrainerArgs(
                 per_device_train_batch_size=1,
-                gradient_accumulation_steps=4,
+                gradient_accumulation_steps=config.gradient_accumulation_sequences,
                 bf16=True,
                 max_grad_norm=0.1,
                 logging_steps=1,
@@ -309,7 +309,7 @@ async def train(config_path: Path, output_dir: Path) -> None:
             scale_rewards=True,
             logprob_calculation_chunk_size=64,
             packed_sequence_length=config.max_seq_length,
-            grad_accumulation_sequences=4,
+            grad_accumulation_sequences=config.gradient_accumulation_sequences,
             save_checkpoint=True,
             verbose=True,
         )
