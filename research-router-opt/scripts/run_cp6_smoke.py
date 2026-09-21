@@ -267,6 +267,23 @@ async def train(config_path: Path, output_dir: Path) -> None:
             groups.append(art.TrajectoryGroup(group_trajectories))
             audits.append(audit_group(task.task_id, group_rewards))
         rollout_time_s = time.perf_counter() - rollout_started
+
+        # Persist rollout evidence before the GRPO safety gate. Degenerate reward
+        # groups are a diagnostic result, not a reason to discard trajectories.
+        with (output_dir / "pre_update_trajectories.jsonl").open(
+            "w", encoding="utf-8"
+        ) as handle:
+            for record in records:
+                handle.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+        write_json(
+            output_dir / "rollout_audit.json",
+            {
+                "train_task_ids": [task.task_id for task in tasks],
+                "trajectory_count": len(records),
+                "rollout_time_s": rollout_time_s,
+                "group_audits": [audit.to_dict() for audit in audits],
+            },
+        )
         require_non_degenerate_group(audits)
         model_dir = Path(get_model_dir(model, str(cast(dict[str, Any], payload["art"])["path"])))
         step0 = Path(get_step_checkpoint_dir(str(model_dir), 0))
@@ -290,9 +307,6 @@ async def train(config_path: Path, output_dir: Path) -> None:
         delta = _tensor_delta(step0, step1)
         total_time_s = time.perf_counter() - started
 
-    with (output_dir / "pre_update_trajectories.jsonl").open("w", encoding="utf-8") as handle:
-        for record in records:
-            handle.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
     evidence = {
         "phase": "train",
         "config": payload,
