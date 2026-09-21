@@ -76,6 +76,15 @@ def _runtime_config(payload: dict[str, Any]) -> RuntimeConfig:
     )
 
 
+def _openai_server_config(art: Any, payload: dict[str, Any]) -> Any:
+    model = cast(dict[str, Any], payload["model"])
+    return art.dev.OpenAIServerConfig(
+        server_args=art.dev.ServerArgs(
+            tool_call_parser=str(model["tool_call_parser"]),
+        )
+    )
+
+
 def _art_model(config: Any, payload: dict[str, Any]) -> Any:
     import art
 
@@ -242,7 +251,10 @@ async def train(config_path: Path, output_dir: Path) -> None:
     started = time.perf_counter()
     torch.cuda.reset_peak_memory_stats()
     with GpuMonitor() as gpu:
-        await model.register(backend)
+        await model.register(
+            backend,
+            _openai_client_config=_openai_server_config(art, payload),
+        )
         registered_step = await model.get_step()
         if registered_step != 0:
             raise RuntimeError(f"CP6 smoke must start at step 0, found {registered_step}.")
@@ -336,6 +348,7 @@ async def train(config_path: Path, output_dir: Path) -> None:
 
 
 async def reload(config_path: Path, output_dir: Path) -> None:
+    import art
     from art.local.backend import LocalBackend
 
     config = load_smoke_config(config_path)
@@ -348,7 +361,10 @@ async def reload(config_path: Path, output_dir: Path) -> None:
     model = _art_model(config, payload)
     started = time.perf_counter()
     with GpuMonitor() as gpu:
-        await model.register(backend)
+        await model.register(
+            backend,
+            _openai_client_config=_openai_server_config(art, payload),
+        )
         step = await model.get_step()
         if step < 1:
             raise RuntimeError(f"Fresh reload expected trained step >= 1, found {step}.")
