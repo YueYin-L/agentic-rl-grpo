@@ -1,6 +1,6 @@
 # Current Phase
 
-DAY 3 — CP7 formal GRPO run `cp7-formal-grpo-001` is running on the 96 GB GPU.
+DAY 3 — CP7 formal GRPO PASS; Gate C review required before CP8 frozen-test evaluation.
 
 # Sprint Day
 
@@ -36,6 +36,11 @@ DAY 3
   launched the formal run as background PID 17703 without loading the frozen test split.
 - First effective update PASS: 4 trajectories, reward mean/std 5.425/0.075, rollout 48.1 s,
   update 179.7 s, non-zero loss/gradient/entropy, and approximately 61 GB peak VRAM.
+- Completed 100 updates and five scheduled 150-task validation passes in 8 h 48 min.
+- Selected checkpoint 80: 88.67% validation Task Success versus 49.33% CP4 Base, with every task
+  type matching or exceeding its CP4 validation success rate.
+- Correctly rejected checkpoint 100 after reward rose while Task Success fell; preserved both
+  best and last checkpoints locally and did not access the frozen test split.
 
 # Checkpoint Status
 
@@ -52,7 +57,7 @@ CP5: PASS — canonical `configs/cp5_reward.toml` frozen after offline reward an
 
 CP6: PASS — canonical run `cp6-smoke-015`; full rollout-to-reload engineering loop proven.
 
-CP7: RUNNING — `cp7-formal-grpo-001`, commit `29f7206`, step 1/100 at last observation.
+CP7: PASS — run `cp7-formal-grpo-001`; best checkpoint 80; final checkpoint 100 rejected by guard.
 
 CP8: NOT STARTED — frozen test remains unused.
 
@@ -74,7 +79,7 @@ Local GPU: NVIDIA GeForce RTX 4060 Laptop GPU, 8188 MiB; not used for canonical 
 
 Cloud GPU: NVIDIA RTX PRO 6000 Blackwell Server Edition, 97887 MiB, driver 580.82.09.
 
-GPU currently required: YES — CP7 formal training is active; do not release the instance.
+GPU currently required: NO — CP7 evidence and best/last checkpoints are backed up locally.
 
 # Dataset
 
@@ -133,13 +138,14 @@ A fresh process loaded step 1 and completed a six-step Schema -> SQL -> SQL -> S
 trajectory with verifier success and reward 5.50. This proves pipeline integrity only; no policy
 improvement is claimed before CP7/CP8 evaluation.
 
-CP7 formal run `cp7-formal-grpo-001` is active from the base model at ART step 0. The first update
-completed successfully. Validation and checkpoint gates occur at steps 20, 40, 60, 80, and 100;
-the guard compares reward, Task Success, grounding, invalid calls, and max-step termination.
+CP7 formal run `cp7-formal-grpo-001` completed 100 updates. Checkpoint 80 is selected with 88.67%
+validation Task Success, 91.33% result correctness, 88.67% grounding, 4.07 average steps, and 3.07
+average tool calls. Checkpoint 100 raised reward from 4.6630 to 4.6903 while Task Success declined
+from 88.67% to 87.33%, so the frozen guard rejected it as best.
 
 # Evaluation
 
-Validation baseline only. Frozen test has not been opened for tuning or reporting.
+Validation Base-vs-GRPO evidence exists through CP7. Frozen test remains unused; CP8 is not started.
 
 # Known Failures
 
@@ -186,6 +192,7 @@ hyperparameter search, and additional reward ablations.
 - `BASELINE_REPORT.md`
 - `REWARD_ANALYSIS.md`
 - `CP6_SMOKE_REPORT.md`
+- `CP7_TRAINING_REPORT.md`
 - `TRAINING_GPU_PLAN.md`
 - `PROJECT_STATUS.md`
 
@@ -222,6 +229,6 @@ CP7 frozen training implementation/run commit: `29f7206`.
 
 # Next 1–3 Actions
 
-1. Resume inspection at the first step-20 validation gate or after the estimated completion window.
-2. If a validation guard stops training, audit its trajectories before any restart.
-3. After completion, preserve best/last checkpoints and review CP7 before any CP8 frozen-test use.
+1. Review CP7 checkpoint-80 selection, validation gains, residual failures, and guard behavior.
+2. Freeze the exact CP8 Base-vs-GRPO evaluation command and checkpoint-80 adapter hash.
+3. Only after review, run the frozen test once; do not retrain or tune on test results.

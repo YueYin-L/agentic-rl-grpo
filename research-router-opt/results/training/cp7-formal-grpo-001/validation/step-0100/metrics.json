@@ -1,0 +1,163 @@
+{
+  "overall": {
+    "task_count": 150,
+    "task_success": 0.8733333333333333,
+    "final_answer_accuracy": 0.8866666666666667,
+    "sql_execution_success": 0.9933333333333333,
+    "result_correctness": 0.9333333333333333,
+    "tool_validity": 1.0,
+    "invalid_call_rate": 0.0,
+    "grounded_answer_rate": 0.8733333333333333,
+    "recovery_opportunities": 9,
+    "recovery_rate": 1.0,
+    "average_steps": 4.0,
+    "average_tool_calls": 3.0,
+    "timeout_rate": 0.0,
+    "failure_modes": {
+      "arithmetic_error": 1,
+      "excessive_tool_use": 4,
+      "grounding_failure": 19,
+      "hallucination": 17,
+      "sql_error": 7,
+      "wrong_table": 1
+    },
+    "reward_mean": 4.690333333333333,
+    "reward_std": 2.269983088532208,
+    "max_step_termination_rate": 0.0
+  },
+  "by_task_type": {
+    "distractor_schema": {
+      "task_count": 21,
+      "task_success": 0.9523809523809523,
+      "final_answer_accuracy": 0.9523809523809523,
+      "sql_execution_success": 1.0,
+      "result_correctness": 0.9523809523809523,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 0.9523809523809523,
+      "recovery_opportunities": 0,
+      "recovery_rate": 0.0,
+      "average_steps": 3.619047619047619,
+      "average_tool_calls": 2.619047619047619,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "grounding_failure": 1,
+        "hallucination": 1
+      }
+    },
+    "error_recovery": {
+      "task_count": 22,
+      "task_success": 0.8636363636363636,
+      "final_answer_accuracy": 0.9090909090909091,
+      "sql_execution_success": 1.0,
+      "result_correctness": 0.8636363636363636,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 0.8636363636363636,
+      "recovery_opportunities": 1,
+      "recovery_rate": 1.0,
+      "average_steps": 3.0454545454545454,
+      "average_tool_calls": 2.0454545454545454,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "grounding_failure": 3,
+        "hallucination": 2
+      }
+    },
+    "multi_query_aggregation": {
+      "task_count": 21,
+      "task_success": 0.38095238095238093,
+      "final_answer_accuracy": 0.42857142857142855,
+      "sql_execution_success": 0.9523809523809523,
+      "result_correctness": 0.8095238095238095,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 0.38095238095238093,
+      "recovery_opportunities": 7,
+      "recovery_rate": 1.0,
+      "average_steps": 5.380952380952381,
+      "average_tool_calls": 4.380952380952381,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "grounding_failure": 13,
+        "hallucination": 12,
+        "sql_error": 7,
+        "wrong_table": 1
+      }
+    },
+    "multi_table_reasoning": {
+      "task_count": 22,
+      "task_success": 1.0,
+      "final_answer_accuracy": 1.0,
+      "sql_execution_success": 1.0,
+      "result_correctness": 1.0,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 1.0,
+      "recovery_opportunities": 0,
+      "recovery_rate": 0.0,
+      "average_steps": 3.727272727272727,
+      "average_tool_calls": 2.727272727272727,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "excessive_tool_use": 1
+      }
+    },
+    "schema_discovery": {
+      "task_count": 22,
+      "task_success": 1.0,
+      "final_answer_accuracy": 1.0,
+      "sql_execution_success": 1.0,
+      "result_correctness": 1.0,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 1.0,
+      "recovery_opportunities": 0,
+      "recovery_rate": 0.0,
+      "average_steps": 3.0,
+      "average_tool_calls": 2.0,
+      "timeout_rate": 0.0,
+      "failure_modes": {}
+    },
+    "sql_calculator": {
+      "task_count": 21,
+      "task_success": 0.9523809523809523,
+      "final_answer_accuracy": 0.9523809523809523,
+      "sql_execution_success": 1.0,
+      "result_correctness": 0.9523809523809523,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 0.9523809523809523,
+      "recovery_opportunities": 1,
+      "recovery_rate": 1.0,
+      "average_steps": 5.333333333333333,
+      "average_tool_calls": 4.333333333333333,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "arithmetic_error": 1,
+        "excessive_tool_use": 3,
+        "grounding_failure": 1,
+        "hallucination": 1
+      }
+    },
+    "tool_selection": {
+      "task_count": 21,
+      "task_success": 0.9523809523809523,
+      "final_answer_accuracy": 0.9523809523809523,
+      "sql_execution_success": 1.0,
+      "result_correctness": 0.9523809523809523,
+      "tool_validity": 1.0,
+      "invalid_call_rate": 0.0,
+      "grounded_answer_rate": 0.9523809523809523,
+      "recovery_opportunities": 0,
+      "recovery_rate": 0.0,
+      "average_steps": 4.0,
+      "average_tool_calls": 3.0,
+      "timeout_rate": 0.0,
+      "failure_modes": {
+        "grounding_failure": 1,
+        "hallucination": 1
+      }
+    }
+  }
+}

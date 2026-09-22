@@ -1,0 +1,115 @@
+{
+  "run_id": "cp7-formal-grpo-001",
+  "started_at": "2026-09-21T09:02:47.919444+00:00",
+  "git": {
+    "branch": "main",
+    "commit": "29f7206d25d5cad8589978bc355c03e7e553c9d8",
+    "tracked_working_tree_clean": true
+  },
+  "frozen_hashes": {
+    "reward": "ab225f57e747f4a3f74931c704a7f09a2bd5ab89acfa6b4703b03ab44ce9e99a",
+    "train": "d2334fe84e165519be152054e433a4966b8ea7862197a5c7d14f412d2a4a0292",
+    "validation": "95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c",
+    "test": "34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b"
+  },
+  "config": {
+    "model": {
+      "id": "Qwen/Qwen3.5-9B",
+      "revision": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+      "precision": "bfloat16",
+      "quantization": "none",
+      "max_seq_length": 4096,
+      "tool_call_parser": "qwen3_xml"
+    },
+    "reward": {
+      "config": "configs/cp5_reward.toml",
+      "sha256": "ab225f57e747f4a3f74931c704a7f09a2bd5ab89acfa6b4703b03ab44ce9e99a"
+    },
+    "dataset": {
+      "train_path": "data/analysis_train.jsonl",
+      "train_sha256": "d2334fe84e165519be152054e433a4966b8ea7862197a5c7d14f412d2a4a0292",
+      "validation_path": "data/analysis_validation.jsonl",
+      "validation_sha256": "95baa5c0438d455a7063ded7679e714d29807b0b575971eee46c692c02f1d98c",
+      "test_path": "data/analysis_test.jsonl",
+      "test_sha256": "34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b"
+    },
+    "runtime": {
+      "max_steps": 10,
+      "model_timeout_s": 180.0,
+      "tool_timeout_s": 5.0
+    },
+    "rollout": {
+      "group_size": 4,
+      "temperature": 0.8,
+      "top_p": 0.95,
+      "max_output_tokens": 768
+    },
+    "validation": {
+      "every_steps": 20,
+      "temperature": 0.0,
+      "top_p": 1.0,
+      "max_output_tokens": 1024,
+      "seed": 20260920
+    },
+    "training": {
+      "max_update_steps": 100,
+      "learning_rate": 5e-06,
+      "loss_fn": "ppo",
+      "scale_rewards": true,
+      "gradient_accumulation_sequences": 1,
+      "trainer_num_generations": 2,
+      "logprob_calculation_chunk_size": 8,
+      "seed": 20260920,
+      "max_group_attempts": 600
+    },
+    "checkpoint": {
+      "save_every_steps": 20,
+      "keep_last": true,
+      "keep_best_validation": true
+    },
+    "baseline": {
+      "run_id": "cp4-canonical-001-audited",
+      "task_success": 0.49333333333333335,
+      "final_answer_accuracy": 0.54,
+      "result_correctness": 0.5533333333333333,
+      "grounded_answer_rate": 0.49333333333333335,
+      "recovery_rate": 0.9142857142857143,
+      "average_steps": 5.8133333333333335,
+      "average_tool_calls": 4.926666666666667,
+      "invalid_call_rate": 0.0,
+      "max_step_termination_rate": 0.11333333333333333,
+      "reward_mean": 1.25
+    },
+    "lora": {
+      "rank": 8,
+      "alpha": 16,
+      "dropout": 0.0,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "up_proj",
+        "down_proj"
+      ]
+    },
+    "art": {
+      "version": "0.5.20",
+      "backend": "LocalBackend",
+      "path": "/root/autodl-tmp/art-cp7",
+      "project": "agentic-rl-grpo",
+      "model_name": "qwen35-9b-cp7-formal",
+      "run_name": "cp7-formal-grpo-001"
+    },
+    "compute": {
+      "gpu": "NVIDIA RTX PRO 6000 Blackwell Server Edition",
+      "vram_mib": 97887,
+      "cuda_profile": "cu130"
+    }
+  },
+  "train_task_count": 300,
+  "validation_task_count": 150,
+  "test_loaded": false,
+  "flashinfer_sampler_disabled": true
+}
