@@ -1,0 +1,42 @@
+[run]
+id = "cp8-frozen-test-001"
+
+[model]
+base_id = "Qwen/Qwen3.5-9B"
+revision = "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+precision = "bfloat16"
+quantization = "none"
+grpo_served_name = "grpo-step80"
+adapter_path = "/root/autodl-tmp/art-cp7/agentic-rl-grpo/models/cp7-formal-grpo-001/checkpoints/0080"
+adapter_sha256 = "7f4f843fbae65e9d9ffa2a0dfd0a79ec50e133fafa7131deef88454dd3fd372e"
+tool_call_parser = "qwen3_xml"
+chat_template = "base-checkpoint bundled chat_template.jinja"
+
+[dataset]
+test_path = "data/analysis_test.jsonl"
+test_sha256 = "34b6d73f32a062c4a5e7fb1bee124aa402ebb8f37f1052b450fabda3bfa0765b"
+task_count = 150
+
+[runtime]
+max_steps = 10
+model_timeout_s = 180.0
+tool_timeout_s = 5.0
+
+[inference]
+temperature = 0.0
+top_p = 1.0
+max_output_tokens = 1024
+seed = 20260920
+max_model_len = 4096
+
+[verifier]
+implementation = "research_router_opt.verifier.verify_trajectory"
+reward_config = "configs/cp5_reward.toml"
+reward_sha256 = "ab225f57e747f4a3f74931c704a7f09a2bd5ab89acfa6b4703b03ab44ce9e99a"
+
+[protocol]
+test_used_before_cp8 = false
+retraining_after_test = "forbidden"
+verifier_changes_after_test = "forbidden"
+checkpoint_selection_after_test = "forbidden"
+
